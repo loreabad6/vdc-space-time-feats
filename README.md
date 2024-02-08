@@ -1,0 +1,3 @@
+The directory `/code` contains an R script (manuscript-figures.R) to recreate the figures from the manuscript.
+
+The directory `/notebook` contains a computational notebook (vdc-showcase.qmd) that documents the creation of vector data cubes (VDC) for features that evolve in space and time, namely, lava flows and landslides, as presented in the manuscript. The notebook contains further examples of the usage of VDCs, beyond the ones included in the manuscript. At the end of notebook, the output of `sessionInfo()` is included to document set-up information such as software and packages used.
