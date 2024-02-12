@@ -1,0 +1,394 @@
+---
+title: "Computational notebook"
+bibliography: https://api.citedrive.com/bib/618133a2-4856-443b-b778-a72d316eb599/references.bib?x=eyJpZCI6ICI2MTgxMzNhMi00ODU2LTQ0M2ItYjc3OC1hNzJkMzE2ZWI1OTkiLCAidXNlciI6ICIyNTY4IiwgInNpZ25hdHVyZSI6ICI4MWExNDU3ODE3NWUxMzFiZDI1NDliOTg2NmQzMWJjNzU4OWI4YjI3MDUxOTU5NDg3MDM5MzFlYmQwMDY0OThhIn0=/bibliography.bib
+format: 
+  gfm: 
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    fig-dpi: 300
+---
+
+# Context
+
+This is a computational notebook to accompany the short paper manuscript "Vector data cubes for features evolving in space and time" submitted to AGILE 2024. 
+
+In this notebook, the expanded code on how to create vector data cubes (VDC) for shape-shifting features as described in section 3.2 (Vector data cube implementation) is included.
+
+Note that the stand-alone code to recreate the figures of the manuscript can be browsed here ([manuscript-figures.qmd](code/manuscript-figures.qmd)).
+
+These experiments are performed in R v. 4.3.2 and further details on library versions are included at the end of the notebook (@sec-session).
+
+# Libraries
+
+The libraries needed to reproduce this notebook are listed below.
+
+```{r}
+#| message: false
+#| warning: false
+library(cubble) # tabular VDCs
+library(dplyr) # data wrangling
+library(ggplot2) # visualisation
+library(here) # manage current directory
+library(patchwork) # plot composer
+library(purrr) # functional programming 
+library(readr) # read CSV files
+library(stars) # array VDCs
+library(stringr) # handle strings
+library(tidyr) # create tidy data
+library(units) # set units
+library(zen4R) # download data from zenodo
+```
+
+# Data and pre-processing
+
+Both data sets are shared through Zenodo, therefore we will directly fetch the necessary data from this repository using `zen4R`.
+
+## Lava flows in Fagradalsfjall, Iceland
+
+The lava flow outlines for the Fagradalsfjall eruption can be obtained from @pedersen_2023_7866738. 
+
+### Repository description
+
+This is the description attached to the repository.
+
+```{r}
+#| results = "asis"
+zenodo = get_zenodo(
+  doi = "10.5281/zenodo.7866738"
+)
+zenodo$metadata$description
+```
+
+### Files
+
+As we see, the vector data format is GeoPackage.
+These are the files contained in the repository:
+
+```{r}
+zenodo$files
+```
+
+From an inspection on the Zenodo listing we could see that the outline for each date is saved as a different file.
+
+### Download and read
+
+Hence, we will download only the outlines zipped file, unzip and create a list of the geopackage files to read into memory.
+
+```{r}
+#| label: downloadlf
+#| eval: false
+dir = tempdir()
+download_zenodo(
+  doi = "10.5281/zenodo.7866738",
+  path = dir,
+  files = list(
+    "outlines_pedersen_etal2022_v12.zip"
+  ),
+  overwrite = FALSE,
+  timeout = 600
+)
+
+# Unzip
+files = list.files(here(dir), full.names = TRUE)
+lapply(files, unzip, exdir = here(dir, "unzipped"))
+
+# Find geopackage files
+fn_gpkg = list.files(
+  here(dir, "unzipped"),
+  pattern = "Outline.*gpkg$",
+  full.names = TRUE,
+  recursive = TRUE
+)
+```
+
+```{r}
+#| label: temporarychunklfdata
+data_dir = here("data", "raw", "lava-flows",
+                "fagradalsfjall")
+fn_gpkg = list.files(
+  here(data_dir, "unzipped"),
+  pattern = "Outline.*gpkg$",
+  full.names = TRUE,
+  recursive = TRUE
+)
+```
+
+With this we can read in the files into R as an `sf` object, where we combine all the files into one. 
+The filename is kept to extract the date information from it.
+
+```{r}
+#| label: readlf
+# Create function to read in each file and to extract 
+# the date from the filename
+read_fun = function(x){
+  read_sf(x) |> 
+    mutate(
+      fn_gpkg = tail(str_split(x, '/')[[1]], n=1),
+      datetime = as.POSIXct(
+        paste(str_split(fn_gpkg, "_")[[1]][2:3], collapse = ""),
+        format = "%Y%m%d%H%M"
+      )
+    ) |> 
+    # One file does not have a crs set
+    st_set_crs(3057)
+}
+
+# Call map2 to read in the files
+# and bind them into one single sf object
+outlines_lf = map(fn_gpkg, read_fun) |> bind_rows()
+```
+
+### Explore
+
+We can look at the final object and have an initial idea of the contents. 
+
+```{r}
+outlines_lf |> glimpse()
+```
+
+As seen, the columns accompanying the data are not complete and also do not provide extra information. 
+We will mainly focus on the geometry and the datetime registered.
+We can take a short look at the polygons included in the data:
+
+```{r}
+ggplot(outlines_lf) +
+  geom_sf(aes(color = datetime), fill = NA) 
+```
+
+### Prepare for VDC
+
+The final step is to make sure we have a single geometry per timestamp.
+For this, we group by datetime and summarise the geometries for each data with a union.
+We add a step to make the geometry valid in case the union operation caused any topological issues.
+
+```{r}
+outlines_lf = outlines_lf |> 
+  # Combine polygons from single date into multipolygons
+  group_by(datetime) |> 
+  summarise(geom = st_combine(geom)) |> 
+  ungroup() |> 
+  # Make geometry valid
+  st_make_valid()
+```
+
+Now our data is ready to be coerced to a VDC.
+
+## Landslide in Butangbunasi, Taiwan
+
+The Butangbunasi landslide outlines can be obtained from @Hoelbling_2024_Butangbunasidata.
+
+### Repository description
+
+This is the description attached to the repository.
+
+```{r}
+#| results = "asis"
+zenodo = get_zenodo(
+  doi = "10.5281/zenodo.10635102"
+)
+zenodo$metadata$description
+```
+
+### Files
+
+Again, the vector data format is GeoPackage.
+These are the files contained in the repository:
+
+```{r}
+zenodo$files
+```
+
+### Download and read
+
+From exploring the repository and checking the description, we concluded the "Butangbunasi_OBIA_statistics.csv" also contains valuable information that can be join into the outline data frames.
+
+```{r}
+#| label: downloadldsl
+#| eval: false
+# Fetch also the CSV file with addiontional info
+dir = tempdir()
+download_zenodo(
+  doi = "10.5281/zenodo.10635102",
+  path = dir,
+  files = list(
+    "outlines.zip",
+    "Butangbunasi_OBIA_statistics.csv"
+  ),
+  overwrite = FALSE,
+  timeout = 100
+)
+
+# Unzip
+files = list.files(here(dir), full.names = TRUE)
+lapply(files, unzip, exdir = here(dir, "unzipped"))
+
+# Find geopackage files
+mapping_ls = list.files(
+  here(dir, "unzipped", "outlines"), 
+  pattern = ".gpkg",
+  full.names = TRUE
+)
+```
+
+```{r}
+#| label: temporarychunkldsldata
+dir = here("data", "raw", "landslides",
+                "butangbunasi")
+mapping_ls = list.files(
+  here(dir, "unzipped", "outlines"), 
+  pattern = ".gpkg",
+  full.names = TRUE
+)
+```
+
+We can then read in the CSV file and the outline files.
+With a left join, we can obtain the date and other columns from the CSV file. 
+
+```{r}
+#| label: readldsl
+#| warning: false
+#| message: false
+# Read in CSV file
+stats = read_csv(
+  here(dir, "Butangbunasi_OBIA_statistics.csv")
+)
+
+# Set-up a read function that fetches filename
+read_fun = function(x){
+  read_sf(x) |> 
+    mutate(
+      fn_gpkg = tail(str_split(x, '/')[[1]], n=1),
+    )
+}
+
+# Read files and combine into single sf object
+# Join with CSV file
+outlines_ldsl = lapply(mapping_ls, read_fun) |> 
+  bind_rows() |> 
+  left_join(stats, by = c("fn_gpkg" = "file"))
+```
+
+### Explore
+
+We can look at the final object and have an initial idea of the contents. 
+
+```{r}
+outlines_ldsl |> glimpse()
+```
+
+For this case, the CSV file added some extra information to the data, such as the satellite sensor and the landslide area.
+We see also the column class and lake area which suggests there is more than one class for this dataset. 
+Let's look at the polygons included in the data:
+
+```{r}
+ggplot(arrange(outlines_ldsl, desc(date))) +
+  geom_sf(aes(color = date, fill = Class), alpha = 0.2) +
+  scale_color_viridis_c(trans = "date") +
+  scale_fill_manual(values = c("deepskyblue3", "peru"))
+```
+
+We see here that the data does not only contain the landslide outlines but also the delineation of a dammed lake. 
+The lake was not considered in the short paper manuscript but we will keep it in this notebook for additional experiments, for handling more than one feature type.
+
+### Prepare for VDC
+
+```{r}
+outlines_ldsl = outlines_ldsl |> 
+  # Extract only landslide class
+  # filter(Class == "landslide") |> 
+  # Coerce date column to Date class
+  mutate(date = as.Date(date)) |> 
+  # Remove outline for 2018
+  # this is a reference outline and does not follow a
+  # Typhoon event according to Hoelbling et al., 2020
+  filter(date != as.Date("2018-11-08")) |>
+  # Group by date which in combination with summarise
+  # will union all single polygons into a multipolygon
+  group_by(date, Class) |> 
+  # Summarise sensor and area information for landslide
+  summarise(
+    sensor = first(satellite_sensor),
+    area_ldsl = set_units(first(landslide_area_ha), 'ha'),
+    area_lake = set_units(first(lake_area_ha), 'ha')
+  ) |> 
+  ungroup() |> 
+  # collapse the area column into a single one depending on Class
+  mutate(
+    area = case_when(
+      Class == "landslide" ~ area_ldsl,
+      Class == "lake" ~ area_lake
+    )
+  ) |> 
+  select(-starts_with("area_")) |> 
+  # Complete data for missing cases of date-Class combination
+  complete(date, Class)
+```
+
+# VDC creation
+
+## Array format
+
+We will start creating an array VDC for the lava flow data.
+For this, we first create a `gid` that in this case will always be `1L` given that this is the only feature of this class under analysis.
+
+```{r}
+# Add gid identifier
+outlines_lf = outlines_lf |> 
+  mutate(gid = 1L)
+
+# Create array
+a = array(
+  data = outlines_lf$geom, 
+  dim = c(
+    length(unique(outlines_lf$gid)),
+    length(unique(outlines_lf$gid)),
+    length(unique(outlines_lf$datetime))
+  ),
+  dimnames = list(
+    geom_sum = unique(outlines_lf$gid),
+    gid = unique(outlines_lf$gid),
+    datetime = unique(outlines_lf$datetime)
+  )
+)
+
+# Create dimensions object
+# Summary geometry is the centroid of the union of all geometries
+# The point parameter indicates if the value refers to a point (location)
+# or to a pixel (area) value
+dim_cent = st_dimensions(
+  geom_sum = st_centroid(st_make_valid(st_union(outlines_lf$geom))), # approach centroid
+  gid = unique(outlines_lf$gid),
+  datetime = unique(outlines_lf$datetime),
+  point = c(TRUE, TRUE, FALSE)
+)
+
+# Coerce to cube
+(cube_arr_lf = st_as_stars(
+  list(geometry = a), 
+  dimensions = dim_cent)
+)
+```
+
+```{r}
+
+```
+
+## Tabular format
+
+# Showcase
+
+## Cube operations
+
+## Visualisation
+
+# References
+::: {#refs}
+:::
+
+# R Session Info {#sec-session}
+
+```{r}
+sessionInfo()
+```
+
