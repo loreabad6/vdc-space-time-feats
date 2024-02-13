@@ -12,12 +12,13 @@ Note that, to reproduce, some packages require the development version fetched f
 #| message: false
 #| warning: false
 pkgs = c(
-  "dplyr","here","patchwork",
+  "dplyr","patchwork",
   "purrr","readr", "stars",
   "stringr","units","zen4R"
 )
 install.packages(pkgs)
 remotes::install_github("tidyverse/ggplot2")
+remotes::install_github("huizezhang-sherry/cubble")
 ```
 
 # Libraries 
