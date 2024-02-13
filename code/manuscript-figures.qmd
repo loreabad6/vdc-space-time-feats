@@ -12,8 +12,8 @@ Note that, to reproduce, some packages require the development version fetched f
 #| message: false
 #| warning: false
 pkgs = c(
-  "dplyr","patchwork","purrr",
-  "readr", "stars","stringr",
+  "dplyr","here","patchwork","purrr",
+  "readr","stars","stringr",
   "tidyr","units","zen4R"
 )
 install.packages(pkgs)
@@ -274,6 +274,8 @@ landslidescent = landslides |>
   group_by(class) |> 
   mutate(geom_sum = st_centroid(st_union(geom))) |> 
   relocate(geom_sum, .after = everything()) |> 
+  ungroup() |> 
+  complete(date, class, geom_sum) |> 
   st_as_sf(sf_column_name = 'geom_sum')
 ```
 
