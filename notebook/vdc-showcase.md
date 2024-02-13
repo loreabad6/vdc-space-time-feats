@@ -30,11 +30,31 @@
   creation](#vdc-creation)
   - [<span class="toc-section-number">4.1</span> Array
     format](#array-format)
+    - [<span class="toc-section-number">4.1.1</span> Lava flow
+      VDC](#lava-flow-vdc)
+    - [<span class="toc-section-number">4.1.2</span> Landslide
+      VDC](#landslide-vdc)
   - [<span class="toc-section-number">4.2</span> Tabular
     format](#tabular-format)
+    - [<span class="toc-section-number">4.2.1</span> Lava flow
+      VDC](#lava-flow-vdc-1)
+    - [<span class="toc-section-number">4.2.2</span> Landslide
+      VDC](#landslide-vdc-1)
 - [<span class="toc-section-number">5</span> Showcase](#showcase)
   - [<span class="toc-section-number">5.1</span> Cube
     operations](#cube-operations)
+    - [<span class="toc-section-number">5.1.1</span> Geometric
+      measurements](#geometric-measurements)
+    - [<span class="toc-section-number">5.1.2</span> Subsetting
+      dimensions](#subsetting-dimensions)
+    - [<span class="toc-section-number">5.1.3</span> Selecting
+      attributes](#selecting-attributes)
+    - [<span class="toc-section-number">5.1.4</span> Filtering
+      time](#filtering-time)
+    - [<span class="toc-section-number">5.1.5</span> CRS
+      transformation](#crs-transformation)
+    - [<span class="toc-section-number">5.1.6</span> Differences in time
+      series](#differences-in-time-series)
   - [<span class="toc-section-number">5.2</span>
     Visualisation](#visualisation)
 - [<span class="toc-section-number">6</span> References](#references)
@@ -56,10 +76,25 @@ can be browsed here
 ([manuscript-figures.qmd](code/manuscript-figures.qmd)).
 
 These experiments are performed in R v. 4.3.2 and further details on
-library versions are included at the end of the notebook
-(<a href="#sec-session" class="quarto-xref">Section 7</a>).
+library versions are included at the end of the notebook.
 
 # Libraries
+
+The following chunk installs the needed libraries. Run only if
+overwriting current installations is not an issue. Note that `cubble`,
+`ggplot` and `ggnewscale` come from the GitHub repository.
+
+``` r
+pkgs = c(
+  "dplyr","here","patchwork","purrr",
+  "readr","stars","stringr",
+  "tidyr","tsibble","units","zen4R"
+)
+install.packages(pkgs)
+remotes::install_github("huizezhang-sherry/cubble")
+remotes::install_github("tidyverse/ggplot2")
+remotes::install_github("eliocamp/ggnewscale")
+```
 
 The libraries needed to reproduce this notebook are listed below.
 
@@ -67,6 +102,7 @@ The libraries needed to reproduce this notebook are listed below.
 library(cubble) # tabular VDCs
 library(dplyr) # data wrangling
 library(ggplot2) # visualisation
+library(ggnewscale) # add second color/fill scale in ggplot
 library(here) # manage current directory
 library(patchwork) # plot composer
 library(purrr) # functional programming 
@@ -74,6 +110,7 @@ library(readr) # read CSV files
 library(stars) # array VDCs
 library(stringr) # handle strings
 library(tidyr) # create tidy data
+library(tsibble) # handle time series data
 library(units) # set units
 library(zen4R) # download data from zenodo
 ```
@@ -228,7 +265,7 @@ for each date is saved as a different file.
 ### Download and read
 
 Hence, we will download only the outlines zipped file, unzip and create
-a list of the geopackage files to read into memory.
+a list of the GeoPackage files to read into memory.
 
 ``` r
 dir = tempdir()
@@ -325,7 +362,7 @@ ggplot(outlines_lf) +
   geom_sf(aes(color = datetime), fill = NA) 
 ```
 
-![](vdc-showcase_files/figure-commonmark/unnamed-chunk-8-1.png)
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 ### Prepare for VDC
 
@@ -701,19 +738,15 @@ ggplot(arrange(outlines_ldsl, desc(date))) +
   scale_fill_manual(values = c("deepskyblue3", "peru"))
 ```
 
-![](vdc-showcase_files/figure-commonmark/unnamed-chunk-16-1.png)
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-17-1.png)
 
 We see here that the data does not only contain the landslide outlines
-but also the delineation of a dammed lake. The lake was not considered
-in the short paper manuscript but we will keep it in this notebook for
-additional experiments, for handling more than one feature type.
+but also the delineation of a dammed lake.
 
 ### Prepare for VDC
 
 ``` r
 outlines_ldsl = outlines_ldsl |> 
-  # Extract only landslide class
-  # filter(Class == "landslide") |> 
   # Coerce date column to Date class
   mutate(date = as.Date(date)) |> 
   # Remove outline for 2018
@@ -739,7 +772,11 @@ outlines_ldsl = outlines_ldsl |>
   ) |> 
   select(-starts_with("area_")) |> 
   # Complete data for missing cases of date-Class combination
-  complete(date, Class)
+  complete(date, Class) |> 
+  # rename the class column (lowercase)
+  rename(class = Class) |> 
+  # convert back to sf
+  st_as_sf()
 ```
 
     `summarise()` has grouped output by 'date'. You can override using the
@@ -749,26 +786,35 @@ outlines_ldsl = outlines_ldsl |>
 
 ## Array format
 
-We will start creating an array VDC for the lava flow data. For this, we
-first create a `gid` that in this case will always be `1L` given that
-this is the only feature of this class under analysis.
+We will start creating an array VDC for the shape-evolving features. For
+this, we create an array object containing the data, i.e., the measure,
+that in this case are the changing geometries, and the dimensions of the
+array that correspond to the length of unique summary geometries (in
+this case 1), and of unique datetime strings.
+
+Finally, we create a dimensions object that includes the *summary
+geometry* for our shape-evolving features. This can be the union of all
+the changing geometries or the centroid of those or the point from which
+the lava erupts or the landslide scar, or any other point the analyst
+sees adequate.
+
+### Lava flow VDC
+
+For the lava flow, we do not use a unique identifier (`id`) because this
+is the only feature of this class under analysis. That means we are not
+including a second lava flow, e.g. the one in Grindavík, in the same
+cube, although we could when data is available.
 
 ``` r
-# Add gid identifier
-outlines_lf = outlines_lf |> 
-  mutate(gid = 1L)
-
 # Create array
 a = array(
   data = outlines_lf$geom, 
   dim = c(
-    length(unique(outlines_lf$gid)),
-    length(unique(outlines_lf$gid)),
+    1,
     length(unique(outlines_lf$datetime))
   ),
   dimnames = list(
-    geom_sum = unique(outlines_lf$gid),
-    gid = unique(outlines_lf$gid),
+    geom_sum = 1,
     datetime = unique(outlines_lf$datetime)
   )
 )
@@ -778,10 +824,9 @@ a = array(
 # The point parameter indicates if the value refers to a point (location)
 # or to a pixel (area) value
 dim_cent = st_dimensions(
-  geom_sum = st_centroid(st_make_valid(st_union(outlines_lf$geom))), # approach centroid
-  gid = unique(outlines_lf$gid),
+  geom_sum = st_centroid(st_make_valid(st_union(outlines_lf$geom))), 
   datetime = unique(outlines_lf$datetime),
-  point = c(TRUE, TRUE, FALSE)
+  point = c(TRUE, FALSE)
 )
 
 # Coerce to cube
@@ -791,7 +836,7 @@ dim_cent = st_dimensions(
 )
 ```
 
-    stars object with 3 dimensions and 1 attribute
+    stars object with 2 dimensions and 1 attribute
     attribute(s):
              geometry  
      MULTIPOLYGON : 2  
@@ -801,18 +846,655 @@ dim_cent = st_dimensions(
     dimension(s):
              from to               refsys point
     geom_sum    1  1 ISN93 / Lambert 1993  TRUE
-    gid         1  1                   NA  TRUE
     datetime    1 30              POSIXct FALSE
                                                   values
     geom_sum                       POINT (339860 380008)
-    gid                                                1
     datetime 2021-03-20 07:45:00,...,2021-09-30 14:20:00
+
+If we would use the union we will see under the values column of the
+`geom_sum` dimension not a `POINT` geometry as above but a `POLYGON`
+geometry. We illustrate this with an unsaved object, so we will keep
+working with the centroid as the `geom_sum`.
+
+``` r
+dim_union = st_dimensions(
+  geom_sum = st_make_valid(st_union(outlines_lf$geom)), 
+  datetime = unique(outlines_lf$datetime),
+  point = c(TRUE, FALSE)
+)
+
+# Coerce to cube
+st_as_stars(
+  list(geometry = a), 
+  dimensions = dim_union)
+```
+
+    stars object with 2 dimensions and 1 attribute
+    attribute(s):
+             geometry  
+     MULTIPOLYGON : 2  
+     POLYGON      :28  
+     epsg:3057    : 0  
+     +proj=lcc ...: 0  
+    dimension(s):
+             from to               refsys point
+    geom_sum    1  1 ISN93 / Lambert 1993 FALSE
+    datetime    1 30              POSIXct FALSE
+                                                  values
+    geom_sum              POLYGON ((339772 381144, 33...
+    datetime 2021-03-20 07:45:00,...,2021-09-30 14:20:00
+
+### Landslide VDC
+
+For the landslide example we have added also the landslide-dammed lake
+outlines. The lake has been present in seven of the Landsat scenes
+mapped and therefore can serve as an example on how to handle absence in
+the data, as well as a second feature set in a VDC.
+
+In this example, we add `class` as an extra dimension, which will mark
+whether the shape-evolving geometry is a landslide or a lake. For this
+particular case this dimension becomes redundant since there are two
+classes and two summary geometries, however, when we deal with more
+landslides and associated lakes, this could become useful. We will
+notice data redundancy by checking the amount of geometries in the
+summary of the attributes, we had initially 40 geometries and now we
+have 80, with 53 empty geometries.
+
+We will perform some extra data wrangling to create this cube. Namely,
+we compute the *summary geometry* on the original `sf` object and
+perform again a complete case check to fill values with `NA`s for every
+combination of `date`, `class` and `geom_sum`.
+
+Further, this dataset contains other information that can be mapped to
+the attributes such as the sensor and area. We will construct separate
+arrays for these and add them all to the cube.
+
+``` r
+# Add geom_sum columns to original sf data
+# will be used also to create tabular VDC
+outlines_ldsl_m = outlines_ldsl |> 
+  # Summary geometry is the centroid of the union 
+  # of all geometries per type
+  group_by(class) |> 
+  mutate(
+    geom_sum = st_centroid(st_make_valid(st_union(geom)))
+  ) |> 
+  relocate(geom_sum, .after = everything()) |> 
+  ungroup() |> 
+  st_as_sf(sf_column_name = 'geom_sum') 
+
+# Complete cases, saved as separate object, see tabular format
+outlines_ldsl_c = outlines_ldsl_m |> 
+  complete(date, class, geom_sum) |> 
+  st_as_sf(sf_column_name = 'geom_sum')
+
+# Create arrays
+dims = c(
+    length(unique(outlines_ldsl_c$geom_sum)),
+    length(unique(outlines_ldsl_c$class)),
+    length(unique(outlines_ldsl_c$date))
+  )
+dnms = list(
+    geom_sum = unique(outlines_ldsl_c$geom_sum),
+    class = unique(outlines_ldsl_c$class),
+    datetime = unique(outlines_ldsl_c$date)
+  )
+geom = array(
+  data = outlines_ldsl_c$geom, 
+  dim = dims,
+  dimnames = dnms
+)
+area = array(
+  data = outlines_ldsl_c$area, 
+  dim = dims,
+  dimnames = dnms
+)
+sensor = array(
+  data = outlines_ldsl_c$sensor, 
+  dim = dims,
+  dimnames = dnms
+)
+
+# Summarise geometries to add in dimensions object
+sumgeom = outlines_ldsl_c |> 
+  group_by(class) |> 
+  summarise(geom_sum = first(geom_sum))
+
+# Create dimensions object
+# The point parameter indicates if the value refers to a point (location)
+# or to a pixel (area) value
+dim_cent = st_dimensions(
+  geom_sum = sumgeom$geom_sum, 
+  class = unique(outlines_ldsl_c$class),
+  date = unique(outlines_ldsl_c$date)
+  # point = c(TRUE, TRUE, FALSE)
+)
+
+# Coerce to cube
+(cube_arr_ldsl = st_as_stars(
+  list(geometry = geom, area = area, sensor = sensor), 
+  dimensions = dim_cent)
+)
+```
+
+    stars object with 3 dimensions and 3 attributes
+    attribute(s):
+                  geometry       area            sensor          
+     GEOMETRYCOLLECTION:53   Min.   :  3.328   Length:80         
+     MULTIPOLYGON      :23   1st Qu.: 41.703   Class :character  
+     POLYGON           : 4   Median :119.750   Mode  :character  
+     epsg:32651        : 0   Mean   :151.641                     
+     +proj=utm ...     : 0   3rd Qu.:177.383                     
+                             Max.   :423.562                     
+                             NA's   :53                          
+    dimension(s):
+             from to                refsys point
+    geom_sum    1  2 WGS 84 / UTM zone 51N  TRUE
+    class       1  2                    NA FALSE
+    date        1 20                  Date FALSE
+                                                     values
+    geom_sum POINT (274148 2567228), POINT (274148 2567228)
+    class                              lake     , landslide
+    date                          1984-12-12,...,2021-08-28
 
 ## Tabular format
 
+For the tabular format we use `cubble`. We can either coerce the `stars`
+VDC into a `cubble` (as shown for the lava flow example), or we can
+create a `cubble` from the original `sf` object (as shown for the
+landslide example).
+
+For this format, we need to define a `key` and `index.` The key is the
+identifier of the spatial face of the cube while the index is the
+identifier of the temporal face. We then use `key = gid` and
+`index = time`.
+
+### Lava flow VDC
+
+As mentioned above, this VDC is created from the `stars` VDC.
+
+``` r
+cube_tab_lf = as_cubble(
+  cube_arr_lf, key = id, index = datetime
+)
+```
+
+We can see the temporal and spatial faces of the cube. As we will see
+`ts` in the spatial table is a list column where the time series is
+stored as displayed in the temporal table.
+
+``` r
+cube_tab_lf |> 
+  face_spatial()
+```
+
+    ℹ The cubble is already in the nested form
+
+    # cubble:   key: id [1], index: datetime, nested form, [sf]
+    # spatial:  [339859.695427319, 380008.4903805, 339859.695427319,
+    #   380008.4903805], ISN93 / Lambert 1993
+    # temporal: datetime [dttm], geometry [GEOMETRY [m]]
+         id       x       y            geom_sum ts               
+    * <int>   <dbl>   <dbl>         <POINT [m]> <list>           
+    1     1 339860. 380008. (339859.7 380008.5) <tibble [30 × 2]>
+
+``` r
+cube_tab_lf |> 
+  face_temporal()
+```
+
+    # cubble:   key: id [1], index: datetime, long form
+    # temporal: 2021-03-20 07:45:00 -- 2021-09-30 14:20:00 [1m], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+          id datetime                                                       geometry
+       <int> <dttm>                                                    <POLYGON [m]>
+     1     1 2021-03-20 07:45:00 ((339233.7 380352.7, 339227.5 380350.7, 339222.2 3…
+     2     1 2021-03-20 12:40:00 ((339159.3 380472.3, 339159.3 380472.3, 339159.1 3…
+     3     1 2021-03-21 11:30:00 ((339355.4 380527.9, 339368.6 380521.4, 339369 380…
+     4     1 2021-03-22 13:22:00 ((339207.9 380067.1, 339203.2 380057.7, 339199.6 3…
+     5     1 2021-03-23 10:05:00 ((339066.8 380389.2, 339066.1 380390.5, 339062.6 3…
+     6     1 2021-03-26 12:52:00 ((339502.9 380141.2, 339495 380144.6, 339493 38014…
+     7     1 2021-03-29 13:19:00 ((339566.1 380135, 339558.8 380133.6, 339558.6 380…
+     8     1 2021-03-30 13:11:00 ((339506.3 380309.3, 339505 380302.6, 339504.8 380…
+     9     1 2021-03-31 12:10:00 ((339031.2 380289.6, 339032 380291, 339032.2 38029…
+    10     1 2021-04-05 10:10:00 ((339360.7 380154.9, 339360.2 380154.7, 339357.4 3…
+    # ℹ 20 more rows
+
+What is interesting from this tabular format is that the `tsibble`
+package is used under the hood to handle the temporal aspect. Therefore,
+information on time intervals is inferred from the given timestamps and
+it is therefore determined if the time series has any gaps.
+
+### Landslide VDC
+
+For this VDC we will use the modified `sf` object for the landslide
+dataset. We have included here the version without the complete cases
+for the three dimensions because `cubble` throws an error for this.
+Further investigation into why this is the case will follow for future
+work.
+
+``` r
+## Create cubble
+cube_tab_ldsl = as_cubble(
+  outlines_ldsl_m, key = class, index = date
+)
+```
+
+We can see the temporal and spatial faces of the cube. Here we note how
+the “lake” and “landslide” become the identifiers for the feature sets.
+
+``` r
+cube_tab_ldsl |> 
+  face_spatial()
+```
+
+    ℹ The cubble is already in the nested form
+
+    # cubble:   key: class [2], index: date, nested form, [sf]
+    # spatial:  [271664.917737363, 2567227.57526178, 274148.347513089,
+    #   2568861.92906261], WGS 84 / UTM zone 51N
+    # temporal: date [date], sensor [chr], area [[ha]], geom [GEOMETRY [m]]
+      class           x        y           geom_sum ts               
+    * <chr>       <dbl>    <dbl>        <POINT [m]> <list>           
+    1 lake      274148. 2567228. (274148.3 2567228) <tibble [20 × 4]>
+    2 landslide 271665. 2568862. (271664.9 2568862) <tibble [20 × 4]>
+
+``` r
+cube_tab_ldsl |> 
+  face_temporal()
+```
+
+    # cubble:   key: class [2], index: date, long form
+    # temporal: 1984-12-12 -- 2021-08-28 [8D], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+       class date       sensor     area                                         geom
+       <chr> <date>     <chr>      [ha]                               <GEOMETRY [m]>
+     1 lake  1984-12-12 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
+     2 lake  1989-10-23 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
+     3 lake  1990-10-10 Landsat 5  5.31 MULTIPOLYGON (((273887.5 2566870, 273887.5 …
+     4 lake  1992-10-31 Landsat 5  3.33 POLYGON ((273950 2566870, 273925 2566870, 2…
+     5 lake  1994-09-03 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
+     6 lake  1996-08-23 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
+     7 lake  1998-11-01 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
+     8 lake  2000-09-27 Landsat 7  6.88 MULTIPOLYGON (((273925 2566783, 273862.5 25…
+     9 lake  2001-09-14 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
+    10 lake  2004-07-12 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
+    # ℹ 30 more rows
+
 # Showcase
 
+In this section, we will demonstrate some of the operations that are
+supported now for VDCs, and some of the operations that we would like to
+implement in future work.
+
+We will use the created cubes (lava flow, landslide) interchangeably,
+considering that most of the operations (given the data structure, e.g.,
+extra dimensions, extra attributes) can be applied to both examples.
+
 ## Cube operations
+
+Most of `dplyr` verbs and `sf` functions work for the array and tabular
+cubes. For the tabular cubes, it is important to remember which face we
+want to apply the operation to.
+
+### Geometric measurements
+
+``` r
+cube_arr_lf |> 
+  mutate(area = st_area(geometry))
+```
+
+    stars object with 2 dimensions and 2 attributes
+    attribute(s):
+             geometry     area [m^2]     
+     MULTIPOLYGON : 2   Min.   :  54517  
+     POLYGON      :28   1st Qu.: 287810  
+     epsg:3057    : 0   Median : 963505  
+     +proj=lcc ...: 0   Mean   :1677119  
+                        3rd Qu.:3084240  
+                        Max.   :4848672  
+    dimension(s):
+             from to               refsys point
+    geom_sum    1  1 ISN93 / Lambert 1993  TRUE
+    datetime    1 30              POSIXct FALSE
+                                                  values
+    geom_sum                       POINT (339860 380008)
+    datetime 2021-03-20 07:45:00,...,2021-09-30 14:20:00
+
+``` r
+cube_tab_lf |> 
+  face_temporal() |> 
+  mutate(area = st_area(geometry))
+```
+
+    # cubble:   key: id [1], index: datetime, long form
+    # temporal: 2021-03-20 07:45:00 -- 2021-09-30 14:20:00 [1m], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+          id datetime                                                geometry   area
+       <int> <dttm>                                             <POLYGON [m]>  [m^2]
+     1     1 2021-03-20 07:45:00 ((339233.7 380352.7, 339227.5 380350.7, 339… 5.45e4
+     2     1 2021-03-20 12:40:00 ((339159.3 380472.3, 339159.3 380472.3, 339… 7.41e4
+     3     1 2021-03-21 11:30:00 ((339355.4 380527.9, 339368.6 380521.4, 339… 1.37e5
+     4     1 2021-03-22 13:22:00 ((339207.9 380067.1, 339203.2 380057.7, 339… 1.71e5
+     5     1 2021-03-23 10:05:00 ((339066.8 380389.2, 339066.1 380390.5, 339… 1.88e5
+     6     1 2021-03-26 12:52:00 ((339502.9 380141.2, 339495 380144.6, 33949… 2.40e5
+     7     1 2021-03-29 13:19:00 ((339566.1 380135, 339558.8 380133.6, 33955… 2.75e5
+     8     1 2021-03-30 13:11:00 ((339506.3 380309.3, 339505 380302.6, 33950… 2.85e5
+     9     1 2021-03-31 12:10:00 ((339031.2 380289.6, 339032 380291, 339032.… 2.95e5
+    10     1 2021-04-05 10:10:00 ((339360.7 380154.9, 339360.2 380154.7, 339… 3.26e5
+    # ℹ 20 more rows
+
+### Subsetting dimensions
+
+Subsetting refers to lookup operations via an index. A way to subset a
+cube is to use the slice verb. Similar results can be achieved with `[`,
+but the syntax is not so intuitive and we need to know the dimension
+order. When a dimension after slicing has a single index it is dropped
+by default. Note how the number of geometries in the attributes changes.
+
+``` r
+cube_arr_lf |> 
+  slice(index = 3:12, along = "datetime")
+```
+
+    stars object with 2 dimensions and 1 attribute
+    attribute(s):
+             geometry 
+     MULTIPOLYGON :2  
+     POLYGON      :8  
+     epsg:3057    :0  
+     +proj=lcc ...:0  
+    dimension(s):
+             from to               refsys point
+    geom_sum    1  1 ISN93 / Lambert 1993  TRUE
+    datetime    3 12              POSIXct FALSE
+                                                  values
+    geom_sum                       POINT (339860 380008)
+    datetime 2021-03-21 11:30:00,...,2021-04-06 13:38:00
+
+``` r
+cube_arr_lf[,,3:12]
+```
+
+    stars object with 2 dimensions and 1 attribute
+    attribute(s):
+             geometry 
+     MULTIPOLYGON :2  
+     POLYGON      :8  
+     epsg:3057    :0  
+     +proj=lcc ...:0  
+    dimension(s):
+             from to               refsys point
+    geom_sum    1  1 ISN93 / Lambert 1993  TRUE
+    datetime    3 12              POSIXct FALSE
+                                                  values
+    geom_sum                       POINT (339860 380008)
+    datetime 2021-03-21 11:30:00,...,2021-04-06 13:38:00
+
+``` r
+cube_arr_ldsl |> 
+  slice(index = 1, along = "class")
+```
+
+    stars object with 2 dimensions and 3 attributes
+    attribute(s):
+                  geometry       area           sensor          
+     GEOMETRYCOLLECTION:33   Min.   : 3.328   Length:40         
+     MULTIPOLYGON      : 3   1st Qu.: 4.041   Class :character  
+     POLYGON           : 4   Median : 5.312   Mode  :character  
+     epsg:32651        : 0   Mean   : 7.563                     
+     +proj=utm ...     : 0   3rd Qu.: 7.625                     
+                             Max.   :20.969                     
+                             NA's   :33                         
+    dimension(s):
+             from to                refsys point
+    geom_sum    1  2 WGS 84 / UTM zone 51N  TRUE
+    date        1 20                  Date FALSE
+                                                     values
+    geom_sum POINT (274148 2567228), POINT (274148 2567228)
+    date                          1984-12-12,...,2021-08-28
+
+### Selecting attributes
+
+We can select single attributes or columns. Note that for the tabular
+format the `key` and `index` behave as sticky columns and always stay.
+
+``` r
+cube_arr_ldsl |> 
+  select(sensor)
+```
+
+    stars object with 3 dimensions and 1 attribute
+    attribute(s):
+       sensor          
+     Length:80         
+     Class :character  
+     Mode  :character  
+    dimension(s):
+             from to                refsys point
+    geom_sum    1  2 WGS 84 / UTM zone 51N  TRUE
+    class       1  2                    NA FALSE
+    date        1 20                  Date FALSE
+                                                     values
+    geom_sum POINT (274148 2567228), POINT (274148 2567228)
+    class                              lake     , landslide
+    date                          1984-12-12,...,2021-08-28
+
+``` r
+cube_tab_ldsl |> 
+  face_temporal() |> 
+  select(sensor)
+```
+
+    ℹ Missing attribute `class` and `date`, add it back.
+
+    # cubble:   key: class [2], index: date, long form
+    # temporal: 1984-12-12 -- 2021-08-28 [8D], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+       class date       sensor   
+       <chr> <date>     <chr>    
+     1 lake  1984-12-12 <NA>     
+     2 lake  1989-10-23 <NA>     
+     3 lake  1990-10-10 Landsat 5
+     4 lake  1992-10-31 Landsat 5
+     5 lake  1994-09-03 <NA>     
+     6 lake  1996-08-23 <NA>     
+     7 lake  1998-11-01 <NA>     
+     8 lake  2000-09-27 Landsat 7
+     9 lake  2001-09-14 <NA>     
+    10 lake  2004-07-12 <NA>     
+    # ℹ 30 more rows
+
+### Filtering time
+
+``` r
+cube_arr_lf |> 
+  filter(datetime > "2021-03-18", datetime < "2021-03-25")
+```
+
+    stars object with 2 dimensions and 1 attribute
+    attribute(s):
+             geometry 
+     POLYGON      :5  
+     epsg:3057    :0  
+     +proj=lcc ...:0  
+    dimension(s):
+             from to               refsys point
+    geom_sum    1  1 ISN93 / Lambert 1993  TRUE
+    datetime    1  5              POSIXct FALSE
+                                                  values
+    geom_sum                       POINT (339860 380008)
+    datetime 2021-03-20 07:45:00,...,2021-03-23 10:05:00
+
+``` r
+cube_tab_lf |> 
+  face_temporal() |> 
+  filter(datetime > "2021-03-18", datetime < "2021-03-25")
+```
+
+    # cubble:   key: id [1], index: datetime, long form
+    # temporal: 2021-03-20 07:45:00 -- 2021-03-23 10:05:00 [1m], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+         id datetime                                                        geometry
+      <int> <dttm>                                                     <POLYGON [m]>
+    1     1 2021-03-20 07:45:00 ((339233.7 380352.7, 339227.5 380350.7, 339222.2 38…
+    2     1 2021-03-20 12:40:00 ((339159.3 380472.3, 339159.3 380472.3, 339159.1 38…
+    3     1 2021-03-21 11:30:00 ((339355.4 380527.9, 339368.6 380521.4, 339369 3805…
+    4     1 2021-03-22 13:22:00 ((339207.9 380067.1, 339203.2 380057.7, 339199.6 38…
+    5     1 2021-03-23 10:05:00 ((339066.8 380389.2, 339066.1 380390.5, 339062.6 38…
+
+### CRS transformation
+
+Transforming the CRS of the VDC works for both the tabular and array
+formats. However, the changing geometries preserve their original CRS,
+even though the *summary_geometry* is modified for both formats.
+
+In future work, we aim for a better integration of the *summary
+geometry* and *shape-evolving geometries*, where both geometry-columns
+get updated with such operations.
+
+``` r
+test_arr = cube_arr_lf |> 
+  st_transform(4326)
+test_arr
+```
+
+    stars object with 2 dimensions and 1 attribute
+    attribute(s):
+             geometry  
+     MULTIPOLYGON : 2  
+     POLYGON      :28  
+     epsg:3057    : 0  
+     +proj=lcc ...: 0  
+    dimension(s):
+             from to  refsys point                                      values
+    geom_sum    1  1  WGS 84  TRUE                        POINT (-22.26 63.89)
+    datetime    1 30 POSIXct FALSE 2021-03-20 07:45:00,...,2021-09-30 14:20:00
+
+``` r
+test_arr$geometry
+```
+
+    Geometry set for 30 features 
+    Geometry type: GEOMETRY
+    Dimension:     XY
+    Bounding box:  xmin: 338076.7 ymin: 377493.5 xmax: 342156.5 ymax: 381359.6
+    Projected CRS: ISN93 / Lambert 1993
+    First 5 geometries:
+
+    POLYGON ((339233.7 380352.7, 339227.5 380350.7,...
+
+    POLYGON ((339159.3 380472.3, 339159.3 380472.3,...
+
+    POLYGON ((339355.4 380527.9, 339368.6 380521.4,...
+
+    POLYGON ((339207.9 380067.1, 339203.2 380057.7,...
+
+    POLYGON ((339066.8 380389.2, 339066.1 380390.5,...
+
+``` r
+test_tab = cube_tab_lf |>  
+  st_transform(4326)
+```
+
+    Warning: st_crs<- : replacing crs does not reproject data; use st_transform for
+    that
+
+``` r
+test_tab
+```
+
+    # cubble:   key: id [1], index: datetime, nested form, [sf]
+    # spatial:  [-22.2606406589017, 63.8866116284422, -22.2606406589017,
+    #   63.8866116284422], ISN93 / Lambert 1993
+    # temporal: datetime [dttm], geometry [GEOMETRY [m]]
+         id       x       y             geom_sum ts               
+      <int>   <dbl>   <dbl>          <POINT [m]> <list>           
+    1     1 339860. 380008. (-22.26064 63.88661) <tibble [30 × 2]>
+
+``` r
+test_tab |> face_temporal()
+```
+
+    # cubble:   key: id [1], index: datetime, long form
+    # temporal: 2021-03-20 07:45:00 -- 2021-09-30 14:20:00 [1m], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+          id datetime                                                       geometry
+       <int> <dttm>                                                    <POLYGON [m]>
+     1     1 2021-03-20 07:45:00 ((339233.7 380352.7, 339227.5 380350.7, 339222.2 3…
+     2     1 2021-03-20 12:40:00 ((339159.3 380472.3, 339159.3 380472.3, 339159.1 3…
+     3     1 2021-03-21 11:30:00 ((339355.4 380527.9, 339368.6 380521.4, 339369 380…
+     4     1 2021-03-22 13:22:00 ((339207.9 380067.1, 339203.2 380057.7, 339199.6 3…
+     5     1 2021-03-23 10:05:00 ((339066.8 380389.2, 339066.1 380390.5, 339062.6 3…
+     6     1 2021-03-26 12:52:00 ((339502.9 380141.2, 339495 380144.6, 339493 38014…
+     7     1 2021-03-29 13:19:00 ((339566.1 380135, 339558.8 380133.6, 339558.6 380…
+     8     1 2021-03-30 13:11:00 ((339506.3 380309.3, 339505 380302.6, 339504.8 380…
+     9     1 2021-03-31 12:10:00 ((339031.2 380289.6, 339032 380291, 339032.2 38029…
+    10     1 2021-04-05 10:10:00 ((339360.7 380154.9, 339360.2 380154.7, 339357.4 3…
+    # ℹ 20 more rows
+
+### Differences in time series
+
+For the tabular format, we can use `tsibble` functions when coercing our
+cube into a temporal tsibble. One useful function is to calculate
+differences between timestamps. We use this for computing the difference
+in area (per feature class for the landslide example) below.
+
+``` r
+cube_tab_lf |> 
+  face_temporal() |> 
+  mutate(area = set_units(st_area(geometry), "ha")) |> 
+  make_temporal_tsibble() |> 
+  mutate(diff = difference(area, order_by = datetime))
+```
+
+    # cubble:   key: id [1], index: datetime, long form, [tsibble]
+    # temporal: 2021-03-20 07:45:00 -- 2021-09-30 14:20:00 [1m], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+          id datetime                                           geometry  area  diff
+       <int> <dttm>                                        <POLYGON [m]>  [ha]  [ha]
+     1     1 2021-03-20 07:45:00 ((339233.7 380352.7, 339227.5 380350.7…  5.45 NA   
+     2     1 2021-03-20 12:40:00 ((339159.3 380472.3, 339159.3 380472.3…  7.41  1.95
+     3     1 2021-03-21 11:30:00 ((339355.4 380527.9, 339368.6 380521.4… 13.7   6.26
+     4     1 2021-03-22 13:22:00 ((339207.9 380067.1, 339203.2 380057.7… 17.1   3.42
+     5     1 2021-03-23 10:05:00 ((339066.8 380389.2, 339066.1 380390.5… 18.8   1.71
+     6     1 2021-03-26 12:52:00 ((339502.9 380141.2, 339495 380144.6, … 24.0   5.23
+     7     1 2021-03-29 13:19:00 ((339566.1 380135, 339558.8 380133.6, … 27.5   3.48
+     8     1 2021-03-30 13:11:00 ((339506.3 380309.3, 339505 380302.6, … 28.5   1.02
+     9     1 2021-03-31 12:10:00 ((339031.2 380289.6, 339032 380291, 33… 29.5   1.02
+    10     1 2021-04-05 10:10:00 ((339360.7 380154.9, 339360.2 380154.7… 32.6   3.02
+    # ℹ 20 more rows
+
+``` r
+cube_tab_ldsl |> 
+  face_temporal() |> 
+  make_temporal_tsibble() |> 
+  group_by(class) |> 
+  mutate(diff = difference(area, order_by = date)) |> 
+  ungroup() |> 
+  arrange(rev(class))
+```
+
+    # cubble:   key: class [2], index: date, long form, [tsibble]
+    # temporal: 1984-12-12 -- 2021-08-28 [8D], has gaps!
+    # spatial:  x [dbl], y [dbl], geom_sum [POINT [m]]
+       class     date       sensor     area                              geom   diff
+       <chr>     <date>     <chr>      [ha]                <MULTIPOLYGON [m]>   [ha]
+     1 landslide 1984-12-12 Landsat 5  66.2 (((271637.5 2568620, 271637.5 25…  NA   
+     2 landslide 1989-10-23 Landsat 5  62.4 (((273712.5 2566845, 273562.5 25…  -3.81
+     3 landslide 1990-10-10 Landsat 5  78.2 (((273737.5 2566845, 273737.5 25…  15.8 
+     4 landslide 1992-10-31 Landsat 5 121.  (((273462.5 2566820, 273462.5 25…  43.2 
+     5 landslide 1994-09-03 Landsat 5  94.1 (((273500 2566820, 273462.5 2566… -27.4 
+     6 landslide 1996-08-23 Landsat 5 118.  (((273462.5 2566820, 273462.5 25…  23.7 
+     7 landslide 1998-11-01 Landsat 5  96.3 (((273775 2566820, 273712.5 2566… -21.5 
+     8 landslide 2000-09-27 Landsat 7 120.  (((273500 2566783, 273500 256682…  23.4 
+     9 landslide 2001-09-14 Landsat 7 121.  (((273825 2566820, 273825 256678…   1.22
+    10 landslide 2004-07-12 Landsat 5 123.  (((273825 2566933, 273862.5 2566…   2.31
+    # ℹ 30 more rows
+
+Functions like spatial filtering and data aggregations would become more
+relevant when we deal with a larger number of feature sets, and will be
+explored for future implementations of the VDC concepts.
 
 ## Visualisation
 
@@ -868,25 +1550,25 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-     [1] zen4R_0.9          units_0.8-5.3      tidyr_1.3.0        stringr_1.5.1     
-     [5] stars_0.6-5        sf_1.0-15          abind_1.4-5        readr_2.1.4       
-     [9] purrr_1.0.2        patchwork_1.2.0    here_1.0.1         ggplot2_3.4.4.9000
-    [13] dplyr_1.1.3        cubble_0.3.0      
+     [1] zen4R_0.9          units_0.8-5.3      tsibble_1.1.4      tidyr_1.3.1       
+     [5] stringr_1.5.1      stars_0.6-5        sf_1.0-15          abind_1.4-5       
+     [9] readr_2.1.4        purrr_1.0.2        patchwork_1.2.0    here_1.0.1        
+    [13] ggnewscale_0.4.10  ggplot2_3.4.4.9000 dplyr_1.1.4        cubble_0.3.0      
 
     loaded via a namespace (and not attached):
-     [1] gtable_0.3.4       anytime_0.3.9      xfun_0.40          rdflib_0.2.8      
-     [5] tsibble_1.1.3      tzdb_0.4.0         vctrs_0.6.5        tools_4.3.1       
+     [1] gtable_0.3.4       anytime_0.3.9      cubelyr_1.0.2      xfun_0.40         
+     [5] rdflib_0.2.8       tzdb_0.4.0         vctrs_0.6.5        tools_4.3.1       
      [9] generics_0.1.3     curl_5.0.2         parallel_4.3.1     tibble_3.2.1      
     [13] proxy_0.4-27       fansi_1.0.6        pkgconfig_2.0.3    KernSmooth_2.23-22
     [17] redland_1.0.17-17  assertthat_0.2.1   lifecycle_1.0.4    farver_2.1.1      
     [21] compiler_4.3.1     atom4R_0.3-3       munsell_0.5.0      keyring_1.3.1     
-    [25] ncdf4_1.21         htmltools_0.5.7    class_7.3-22       yaml_2.3.8        
+    [25] ncdf4_1.22         htmltools_0.5.7    class_7.3-22       yaml_2.3.8        
     [29] crayon_1.5.2       pillar_1.9.0       ellipsis_0.3.2     classInt_0.4-10   
-    [33] tidyselect_1.2.0   zip_2.3.0          digest_0.6.33      stringi_1.7.12    
+    [33] zip_2.3.0          tidyselect_1.2.0   digest_0.6.33      stringi_1.8.3     
     [37] rprojroot_2.0.3    fastmap_1.1.1      grid_4.3.1         colorspace_2.1-0  
     [41] cli_3.6.2          magrittr_2.0.3     XML_3.99-0.16      utf8_1.2.4        
-    [45] e1071_1.7-13       withr_3.0.0        scales_1.3.0       bit64_4.0.5       
-    [49] lubridate_1.9.2    timechange_0.2.0   roxygen2_7.2.3     rmarkdown_2.25    
+    [45] e1071_1.7-14       withr_3.0.0        scales_1.3.0       bit64_4.0.5       
+    [49] lubridate_1.9.3    timechange_0.3.0   roxygen2_7.2.3     rmarkdown_2.25    
     [53] httr_1.4.7         bit_4.0.5          hms_1.1.3          evaluate_0.23     
     [57] knitr_1.45         viridisLite_0.4.2  rlang_1.1.3        Rcpp_1.0.11       
     [61] glue_1.7.0         DBI_1.2.1          xml2_1.3.5         vroom_1.6.3       

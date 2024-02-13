@@ -7,6 +7,8 @@ format:
     toc-depth: 3
     number-sections: true
     fig-dpi: 300
+editor_options: 
+  chunk_output_type: console
 ---
 
 # Context
@@ -17,9 +19,26 @@ In this notebook, the expanded code on how to create vector data cubes (VDC) for
 
 Note that the stand-alone code to recreate the figures of the manuscript can be browsed here ([manuscript-figures.qmd](code/manuscript-figures.qmd)).
 
-These experiments are performed in R v. 4.3.2 and further details on library versions are included at the end of the notebook (@sec-session).
+These experiments are performed in R v. 4.3.2 and further details on library versions are included at the end of the notebook.
 
 # Libraries
+
+The following chunk installs the needed libraries. Run only if overwriting current installations is not an issue. Note that `cubble`, `ggplot` and `ggnewscale` come from the GitHub repository.
+
+```{r}
+#| eval: false
+#| message: false
+#| warning: false
+pkgs = c(
+  "dplyr","here","patchwork","purrr",
+  "readr","stars","stringr",
+  "tidyr","tsibble","units","zen4R"
+)
+install.packages(pkgs)
+remotes::install_github("huizezhang-sherry/cubble")
+remotes::install_github("tidyverse/ggplot2")
+remotes::install_github("eliocamp/ggnewscale")
+```
 
 The libraries needed to reproduce this notebook are listed below.
 
@@ -29,6 +48,7 @@ The libraries needed to reproduce this notebook are listed below.
 library(cubble) # tabular VDCs
 library(dplyr) # data wrangling
 library(ggplot2) # visualisation
+library(ggnewscale) # add second color/fill scale in ggplot
 library(here) # manage current directory
 library(patchwork) # plot composer
 library(purrr) # functional programming 
@@ -36,6 +56,7 @@ library(readr) # read CSV files
 library(stars) # array VDCs
 library(stringr) # handle strings
 library(tidyr) # create tidy data
+library(tsibble) # handle time series data
 library(units) # set units
 library(zen4R) # download data from zenodo
 ```
@@ -73,7 +94,7 @@ From an inspection on the Zenodo listing we could see that the outline for each 
 
 ### Download and read
 
-Hence, we will download only the outlines zipped file, unzip and create a list of the geopackage files to read into memory.
+Hence, we will download only the outlines zipped file, unzip and create a list of the GeoPackage files to read into memory.
 
 ```{r}
 #| label: downloadlf
@@ -289,14 +310,11 @@ ggplot(arrange(outlines_ldsl, desc(date))) +
 ```
 
 We see here that the data does not only contain the landslide outlines but also the delineation of a dammed lake. 
-The lake was not considered in the short paper manuscript but we will keep it in this notebook for additional experiments, for handling more than one feature type.
 
 ### Prepare for VDC
 
 ```{r}
 outlines_ldsl = outlines_ldsl |> 
-  # Extract only landslide class
-  # filter(Class == "landslide") |> 
   # Coerce date column to Date class
   mutate(date = as.Date(date)) |> 
   # Remove outline for 2018
@@ -322,32 +340,38 @@ outlines_ldsl = outlines_ldsl |>
   ) |> 
   select(-starts_with("area_")) |> 
   # Complete data for missing cases of date-Class combination
-  complete(date, Class)
+  complete(date, Class) |> 
+  # rename the class column (lowercase)
+  rename(class = Class) |> 
+  # convert back to sf
+  st_as_sf()
 ```
 
 # VDC creation
 
 ## Array format
 
-We will start creating an array VDC for the lava flow data.
-For this, we first create a `gid` that in this case will always be `1L` given that this is the only feature of this class under analysis.
+We will start creating an array VDC for the shape-evolving features.
+For this, we create an array object containing the data, i.e., the measure, that in this case are the changing geometries, and the dimensions of the array that correspond to the length of unique summary geometries (in this case 1), and of unique datetime strings.
+
+Finally, we create a dimensions object that includes the *summary geometry* for our shape-evolving features.
+This can be the union of all the changing geometries or the centroid of those or the point from which the lava erupts or the landslide scar, or any other point the analyst sees adequate.
+
+### Lava flow VDC
+
+For the lava flow, we do not use a unique identifier (`id`) because this is the only feature of this class under analysis.
+That means we are not including a second lava flow, e.g. the one in Grindavík, in the same cube, although we could when data is available.
 
 ```{r}
-# Add gid identifier
-outlines_lf = outlines_lf |> 
-  mutate(gid = 1L)
-
 # Create array
 a = array(
   data = outlines_lf$geom, 
   dim = c(
-    length(unique(outlines_lf$gid)),
-    length(unique(outlines_lf$gid)),
+    1,
     length(unique(outlines_lf$datetime))
   ),
   dimnames = list(
-    geom_sum = unique(outlines_lf$gid),
-    gid = unique(outlines_lf$gid),
+    geom_sum = 1,
     datetime = unique(outlines_lf$datetime)
   )
 )
@@ -357,10 +381,9 @@ a = array(
 # The point parameter indicates if the value refers to a point (location)
 # or to a pixel (area) value
 dim_cent = st_dimensions(
-  geom_sum = st_centroid(st_make_valid(st_union(outlines_lf$geom))), # approach centroid
-  gid = unique(outlines_lf$gid),
+  geom_sum = st_centroid(st_make_valid(st_union(outlines_lf$geom))), 
   datetime = unique(outlines_lf$datetime),
-  point = c(TRUE, TRUE, FALSE)
+  point = c(TRUE, FALSE)
 )
 
 # Coerce to cube
@@ -370,15 +393,266 @@ dim_cent = st_dimensions(
 )
 ```
 
-```{r}
+If we would use the union we will see under the values column of the `geom_sum` dimension not a `POINT` geometry as above but a `POLYGON` geometry.
+We illustrate this with an unsaved object, so we will keep working with the centroid as the `geom_sum`.
 
+```{r}
+dim_union = st_dimensions(
+  geom_sum = st_make_valid(st_union(outlines_lf$geom)), 
+  datetime = unique(outlines_lf$datetime),
+  point = c(TRUE, FALSE)
+)
+
+# Coerce to cube
+st_as_stars(
+  list(geometry = a), 
+  dimensions = dim_union)
+```
+
+### Landslide VDC
+
+For the landslide example we have added also the landslide-dammed lake outlines. 
+The lake has been present in seven of the Landsat scenes mapped and therefore can serve as an example on how to handle absence in the data, as well as a second feature set in a VDC.
+
+In this example, we add `class` as an extra dimension, which will mark whether the shape-evolving geometry is a landslide or a lake.
+For this particular case this dimension becomes redundant since there are two classes and two summary geometries, however, when we deal with more landslides and associated lakes, this could become useful.
+We will notice data redundancy by checking the amount of geometries in the summary of the attributes, we had initially 40 geometries and now we have 80, with 53 empty geometries.
+
+We will perform some extra data wrangling to create this cube. 
+Namely, we compute the *summary geometry* on the original `sf` object and perform again a complete case check to fill values with `NA`s for every combination of `date`, `class` and `geom_sum`.
+
+Further, this dataset contains other information that can be mapped to the attributes such as the sensor and area.
+We will construct separate arrays for these and add them all to the cube.
+
+```{r}
+# Add geom_sum columns to original sf data
+# will be used also to create tabular VDC
+outlines_ldsl_m = outlines_ldsl |> 
+  # Summary geometry is the centroid of the union 
+  # of all geometries per type
+  group_by(class) |> 
+  mutate(
+    geom_sum = st_centroid(st_make_valid(st_union(geom)))
+  ) |> 
+  relocate(geom_sum, .after = everything()) |> 
+  ungroup() |> 
+  st_as_sf(sf_column_name = 'geom_sum') 
+
+# Complete cases, saved as separate object, see tabular format
+outlines_ldsl_c = outlines_ldsl_m |> 
+  complete(date, class, geom_sum) |> 
+  st_as_sf(sf_column_name = 'geom_sum')
+
+# Create arrays
+dims = c(
+    length(unique(outlines_ldsl_c$geom_sum)),
+    length(unique(outlines_ldsl_c$class)),
+    length(unique(outlines_ldsl_c$date))
+  )
+dnms = list(
+    geom_sum = unique(outlines_ldsl_c$geom_sum),
+    class = unique(outlines_ldsl_c$class),
+    datetime = unique(outlines_ldsl_c$date)
+  )
+geom = array(
+  data = outlines_ldsl_c$geom, 
+  dim = dims,
+  dimnames = dnms
+)
+area = array(
+  data = outlines_ldsl_c$area, 
+  dim = dims,
+  dimnames = dnms
+)
+sensor = array(
+  data = outlines_ldsl_c$sensor, 
+  dim = dims,
+  dimnames = dnms
+)
+
+# Summarise geometries to add in dimensions object
+sumgeom = outlines_ldsl_c |> 
+  group_by(class) |> 
+  summarise(geom_sum = first(geom_sum))
+
+# Create dimensions object
+# The point parameter indicates if the value refers to a point (location)
+# or to a pixel (area) value
+dim_cent = st_dimensions(
+  geom_sum = sumgeom$geom_sum, 
+  class = unique(outlines_ldsl_c$class),
+  date = unique(outlines_ldsl_c$date)
+  # point = c(TRUE, TRUE, FALSE)
+)
+
+# Coerce to cube
+(cube_arr_ldsl = st_as_stars(
+  list(geometry = geom, area = area, sensor = sensor), 
+  dimensions = dim_cent)
+)
 ```
 
 ## Tabular format
 
+For the tabular format we use `cubble`. 
+We can either coerce the `stars` VDC into a `cubble` (as shown for the lava flow example), or we can create a `cubble` from the original `sf` object (as shown for the landslide example).
+
+For this format, we need to define a `key` and `index.` The key is the identifier of the spatial face of the cube while the index is the identifier of the temporal face.
+We then use `key = gid` and `index = time`.
+
+### Lava flow VDC
+
+As mentioned above, this VDC is created from the `stars` VDC. 
+
+```{r}
+cube_tab_lf = as_cubble(
+  cube_arr_lf, key = id, index = datetime
+)
+```
+
+We can see the temporal and spatial faces of the cube.
+As we will see `ts` in the spatial table is a list column where the time series is stored as displayed in the temporal table.
+
+```{r}
+cube_tab_lf |> 
+  face_spatial()
+cube_tab_lf |> 
+  face_temporal()
+```
+
+What is interesting from this tabular format is that the `tsibble` package is used under the hood to handle the temporal aspect.
+Therefore, information on time intervals is inferred from the given timestamps and it is therefore determined if the time series has any gaps.
+
+### Landslide VDC
+
+For this VDC we will use the modified `sf` object for the landslide dataset.
+We have included here the version without the complete cases for the three dimensions because `cubble` throws an error for this.
+Further investigation into why this is the case will follow for future work.
+
+```{r}
+## Create cubble
+cube_tab_ldsl = as_cubble(
+  outlines_ldsl_m, key = class, index = date
+)
+```
+
+We can see the temporal and spatial faces of the cube.
+Here we note how the "lake" and "landslide" become the identifiers for the feature sets.
+
+```{r}
+cube_tab_ldsl |> 
+  face_spatial()
+cube_tab_ldsl |> 
+  face_temporal()
+```
+
 # Showcase
 
+In this section, we will demonstrate some of the operations that are supported now for VDCs, and some of the operations that we would like to implement in future work.
+
+We will use the created cubes (lava flow, landslide) interchangeably, considering that most of the operations (given the data structure, e.g., extra dimensions, extra attributes) can be applied to both examples.
+
 ## Cube operations
+
+Most of `dplyr` verbs and `sf` functions work for the array and tabular cubes.
+For the tabular cubes, it is important to remember which face we want to apply the operation to.
+
+### Geometric measurements
+
+```{r}
+cube_arr_lf |> 
+  mutate(area = st_area(geometry))
+
+cube_tab_lf |> 
+  face_temporal() |> 
+  mutate(area = st_area(geometry))
+```
+
+### Subsetting dimensions
+
+Subsetting refers to lookup operations via an index.
+A way to subset a cube is to use the slice verb. 
+Similar results can be achieved with `[`, but the syntax is not so intuitive and we need to know the dimension order.
+When a dimension after slicing has a single index it is dropped by default.
+Note how the number of geometries in the attributes changes.
+
+```{r}
+cube_arr_lf |> 
+  slice(index = 3:12, along = "datetime")
+
+cube_arr_lf[,,3:12]
+
+cube_arr_ldsl |> 
+  slice(index = 1, along = "class")
+```
+
+### Selecting attributes
+
+We can select single attributes or columns. 
+Note that for the tabular format the `key` and `index` behave as sticky columns and always stay.
+
+```{r}
+cube_arr_ldsl |> 
+  select(sensor)
+
+cube_tab_ldsl |> 
+  face_temporal() |> 
+  select(sensor)
+```
+
+### Filtering time
+
+```{r}
+cube_arr_lf |> 
+  filter(datetime > "2021-03-18", datetime < "2021-03-25")
+
+cube_tab_lf |> 
+  face_temporal() |> 
+  filter(datetime > "2021-03-18", datetime < "2021-03-25")
+```
+
+### CRS transformation
+
+Transforming the CRS of the VDC works for both the tabular and array formats.
+However, the changing geometries preserve their original CRS, even though the *summary_geometry* is modified for both formats.
+
+In future work, we aim for a better integration of the *summary geometry* and *shape-evolving geometries*, where both geometry-columns get updated with such operations.
+
+```{r}
+test_arr = cube_arr_lf |> 
+  st_transform(4326)
+test_arr
+test_arr$geometry
+
+test_tab = cube_tab_lf |>  
+  st_transform(4326)
+test_tab
+test_tab |> face_temporal()
+```
+
+### Differences in time series
+
+For the tabular format, we can use `tsibble` functions when coercing our cube into a temporal tsibble.
+One useful function is to calculate differences between timestamps.
+We use this for computing the difference in area (per feature class for the landslide example) below.
+
+```{r}
+cube_tab_lf |> 
+  face_temporal() |> 
+  mutate(area = set_units(st_area(geometry), "ha")) |> 
+  make_temporal_tsibble() |> 
+  mutate(diff = difference(area, order_by = datetime))
+
+cube_tab_ldsl |> 
+  face_temporal() |> 
+  make_temporal_tsibble() |> 
+  group_by(class) |> 
+  mutate(diff = difference(area, order_by = date)) |> 
+  ungroup() |> 
+  arrange(rev(class))
+```
+
+Functions like spatial filtering and data aggregations would become more relevant when we deal with a larger number of feature sets, and will be explored for future implementations of the VDC concepts.
 
 ## Visualisation
 
@@ -391,4 +665,3 @@ dim_cent = st_dimensions(
 ```{r}
 sessionInfo()
 ```
-
