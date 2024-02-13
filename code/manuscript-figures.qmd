@@ -12,12 +12,13 @@ Note that, to reproduce, some packages require the development version fetched f
 #| message: false
 #| warning: false
 pkgs = c(
-  "dplyr","patchwork",
-  "purrr","readr", "stars",
-  "stringr","units","zen4R"
+  "dplyr","patchwork","purrr",
+  "readr", "stars","stringr",
+  "tidyr","units","zen4R"
 )
 install.packages(pkgs)
 remotes::install_github("tidyverse/ggplot2")
+remotes::install_github("eliocamp/ggnewscale")
 remotes::install_github("huizezhang-sherry/cubble")
 ```
 
@@ -27,6 +28,7 @@ remotes::install_github("huizezhang-sherry/cubble")
 #| warning: false
 library(cubble)
 library(dplyr)
+library(ggnewscale)
 library(ggplot2)
 library(here)
 library(patchwork)
@@ -34,6 +36,7 @@ library(purrr)
 library(readr)
 library(stars)
 library(stringr)
+library(tidyr)
 library(units)
 library(zen4R)
 ```
@@ -109,21 +112,15 @@ outlines = outlines |>
 
 ## VDC coercion
 ```{r}
-# Add gid identifier
-outlines = outlines |> 
-  mutate(gid = 1L)
-
 # Create array
 a = array(
   data = outlines$geom, 
   dim = c(
-    length(unique(outlines$gid)),
-    length(unique(outlines$gid)),
+    1,
     length(unique(outlines$datetime))
   ),
   dimnames = list(
-    geom_sum = unique(outlines$gid),
-    gid = unique(outlines$gid),
+    geom_sum = 1,
     datetime = unique(outlines$datetime)
   )
 )
@@ -134,9 +131,8 @@ a = array(
 # or to a pixel (area) value
 dim_cent = st_dimensions(
   geom_sum = st_centroid(st_make_valid(st_union(outlines$geom))), # approach centroid
-  gid = unique(outlines$gid),
   datetime = unique(outlines$datetime),
-  point = c(TRUE, TRUE, FALSE)
+  point = c(TRUE, FALSE)
 )
 
 # Coerce to cube
@@ -238,30 +234,46 @@ mapping = lapply(mapping_ls, read_fun) |>
 # All pre-processing steps are chained but have 
 # documentation in each line
 landslides = mapping |> 
-  # Extract only landslide class
-  filter(Class == "landslide") |> 
   # Coerce date column to Date class
   mutate(date = as.Date(date)) |> 
   # Remove outline for 2018
   # this is a reference outline and does not follow a
   # Typhoon event according to Hoelbling et al., 2020
   filter(date != as.Date("2018-11-08")) |>
-  # Group by date which in combination with summarise
+  # Group by date and class which in combination with summarise
   # will union all single polygons into a multipolygon
-  group_by(date) |> 
+  group_by(date, Class) |> 
   # Summarise sensor and area information for landslide
   summarise(
     sensor = first(satellite_sensor),
-    area = set_units(first(landslide_area_ha), 'ha')
+    area_ldsl = set_units(first(landslide_area_ha), 'ha'),
+    area_lake = set_units(first(lake_area_ha), 'ha')
   ) |> 
-  # Add unique identifier
-  mutate(gid = 1L)
+  # ungroup
+  ungroup() |> 
+  # set area to respective class
+  mutate(
+    area = case_when(
+      Class == "landslide" ~ area_ldsl,
+      Class == "lake" ~ area_lake
+    )
+  ) |> 
+  # remove wide area columns
+  select(-starts_with("area_")) |> 
+  # complete cases for every combination of date and class
+  # for geometries this is filled with an empty geometry
+  complete(date, Class) |> 
+  # rename the class column (lowercase)
+  rename(class = Class) |> 
+  # convert back to sf
+  st_as_sf()
 
-# Compute geom_sum as the centroid of the union of the geometries
+# Compute geom_sum as the centroid of the union of 
+# the geometries per feature class
 landslidescent = landslides |> 
-  group_by(gid) |> 
+  group_by(class) |> 
   mutate(geom_sum = st_centroid(st_union(geom))) |> 
-  relocate(geom_sum, .after = gid) |> 
+  relocate(geom_sum, .after = everything()) |> 
   st_as_sf(sf_column_name = 'geom_sum')
 ```
 
@@ -270,15 +282,17 @@ landslidescent = landslides |>
 # Call as cubble to coerce from sf to cubble
 # key is the gid column while index is date
 cube_tab = as_cubble(
-  landslidescent, key = gid, index = date
+  landslidescent, key = class, index = date
 )
 
 # The output of this code corresponds to Figure 4a
 cube_tab |> 
   face_spatial()
-# The truncated output of this code corresponds to Figure 4b
+# The output of this code corresponds to Figure 4b
 cube_tab |> 
-  face_temporal()
+  face_temporal() |> 
+  arrange(date) |> 
+  print(n = 4)
 ```
 
 # Figure 5
@@ -303,8 +317,11 @@ ldsl_shear = landslides |>
   mutate(
     area = st_area(geom),
     geom = geom * sm,
-    # sequence along date, i.e. 1 to 20
-    shift_y = seq_along(date)
+    # sequence along date, i.e. 1 to 20 per class
+    shift_y = rep(
+      1:length(unique(date)),
+      each = length(unique(class))
+    )
   ) |> 
   # Add lost crs
   st_set_crs(st_crs(landslides)) 
@@ -322,26 +339,47 @@ ldsl_shift = ldsl_shear |>
 
 # Plot a)
 spaceplot = ggplot(ldsl_shift) +
+  # plot landslide geometries
   geom_sf(
+    data = filter(ldsl_shift, class == "landslide"),
     aes(fill = date), 
     color = "black",
     show.legend = FALSE
   ) +
+  # plot lake geoemtries
+  geom_sf(
+    data = filter(ldsl_shift, class == "lake"),
+    color = "red", fill = "pink",
+    show.legend = FALSE
+  ) +
   # Add date label, the value of x is added after visual inspection
-  geom_text(aes(label = date, y = y_label), x = 3751500, size = 3.5) +
+  geom_text(
+    data = filter(ldsl_shift, class == "landslide"),
+    aes(label = date, y = y_label),
+    x = 3751500, size = 3.5
+  ) +
   scale_fill_viridis_c("Date", direction = 1, trans = "date", option = "D") +
   # Limits are expanded after visual inspection
-  coord_sf(xlim = c(3745000, 3767000), ylim = c(2576500, 2646000), clip = "off") +
+  coord_sf(xlim = c(3745000, 3767000), ylim = c(2576000, 2646000), clip = "off") +
   theme_void()+
   theme(
     text = element_text(size = 18)
   )
 
+# Warngle data to add in rug of area plot
+rug_data = cube_tab |> 
+  face_temporal() |> 
+  filter(class == 'lake', !st_is_empty(geom)) |> 
+  mutate(
+    class = "Landslide-dammed lake",
+    Area = 0.3
+  )
 
 # Plot b), directly from cubble object in temporal face
 area = cube_tab |> 
   face_temporal() |> 
   rename(Area = area) |> 
+  filter(class == 'landslide') |> 
   ggplot() +
   aes(
     x = date, y = Area,
@@ -349,13 +387,18 @@ area = cube_tab |>
     shape = sensor, 
     group = 1
   ) +
-  geom_point(size = 2) + geom_line() +
+  geom_point(size = 3, aes(color = date)) + 
+  geom_line(aes(color = date)) +
   scale_y_units(unit = "km2") +
-  scale_color_viridis_c("Date", direction = 1, trans = "date", option = "D") +
-  scale_shape("Sensor") +
-  guides(
-    color = guide_colorbar(barwidth = 20, barheight = 0.8)
+  scale_color_viridis_c(
+    "Date", direction = 1,
+    trans = "date", option = "D",
+    guide = guide_colorbar(barwidth = 20, barheight = 0.8)
   ) +
+  scale_shape("Sensor") +
+ ggnewscale::new_scale_color() +
+  geom_rug(data = rug_data, aes(color = class), sides = "b") +
+  scale_color_manual("", values = "red") +
   theme_bw() +
   theme(
     text = element_text(size = 18),
@@ -377,14 +420,14 @@ AAAABBBBBB
 AAAABBBBBB
 AAAABBBBBB
 AAAACCCCCC
-AAAADDDDDD
-AAAADDDDDD
-AAAADDDDDD
-AAAADDDDDD
+AAAACCCCCC
+AAAACCCCCC
+AAAACCCCCC
+AAAACCCCCC
 "
 
 # Combine plots with patchwork
-spaceplot + area + plot_spacer() + guide_area() + 
+spaceplot + area + guide_area() + 
   plot_layout(guides = "collect", design = layout) + 
   plot_annotation(tag_levels = "a", tag_suffix = ")")
 ```
