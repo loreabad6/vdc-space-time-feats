@@ -158,14 +158,14 @@ oldpar = par(no.readonly = TRUE)
 par(mar = c(1.8,1,1.1,0.3), bg = "transparent")
 wrap_elements(
   ~cube_arr |>
-    # use pseudo-function to extract geometries from vdc attributes
+    # use lambda-function to extract geometries from vdc attributes
     (\(x) plot(x$geometry, axes = TRUE))(),
   clip = FALSE
 ) /
 wrap_elements(
   ~cube_arr |>
     filter(datetime > "2021-03-18", datetime < "2021-03-25") |> 
-    # use pseudo-function to extract geometries from vdc attributes
+    # use lambda-function to extract geometries from vdc attributes
     (\(x) plot(x$geometry, axes = TRUE))(),
   clip = FALSE
 ) +
@@ -275,7 +275,6 @@ landslidescent = landslides |>
   mutate(geom_sum = st_centroid(st_union(geom))) |> 
   relocate(geom_sum, .after = everything()) |> 
   ungroup() |> 
-  complete(date, class, geom_sum) |> 
   st_as_sf(sf_column_name = 'geom_sum')
 ```
 
@@ -317,7 +316,6 @@ sm = matrix(c(2.5, 1.2, 0, 1), 2, 2)
 # Apply shear matrix
 ldsl_shear = landslides |>
   mutate(
-    area = st_area(geom),
     geom = geom * sm,
     # sequence along date, i.e. 1 to 20 per class
     shift_y = rep(
@@ -348,7 +346,7 @@ spaceplot = ggplot(ldsl_shift) +
     color = "black",
     show.legend = FALSE
   ) +
-  # plot lake geoemtries
+  # plot lake geometries
   geom_sf(
     data = filter(ldsl_shift, class == "lake"),
     color = "red", fill = "pink",
@@ -368,7 +366,7 @@ spaceplot = ggplot(ldsl_shift) +
     text = element_text(size = 18)
   )
 
-# Warngle data to add in rug of area plot
+# Wrangle data to add in rug of area plot
 rug_data = cube_tab |> 
   face_temporal() |> 
   filter(class == 'lake', !st_is_empty(geom)) |> 
@@ -385,7 +383,6 @@ area = cube_tab |>
   ggplot() +
   aes(
     x = date, y = Area,
-    color = date,
     shape = sensor, 
     group = 1
   ) +
