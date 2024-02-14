@@ -57,6 +57,14 @@
       series](#differences-in-time-series)
   - [<span class="toc-section-number">5.2</span>
     Visualisation](#visualisation)
+    - [<span class="toc-section-number">5.2.1</span> Maps with array
+      VDCs](#maps-with-array-vdcs)
+    - [<span class="toc-section-number">5.2.2</span> Multi-dimensional
+      plot](#multi-dimensional-plot)
+    - [<span class="toc-section-number">5.2.3</span> Time series
+      plots](#time-series-plots)
+    - [<span class="toc-section-number">5.2.4</span> Glyph
+      maps](#glyph-maps)
 - [<span class="toc-section-number">6</span> References](#references)
 - [<span class="toc-section-number">7</span> R Session
   Info](#sec-session)
@@ -82,7 +90,8 @@ library versions are included at the end of the notebook.
 
 The following chunk installs the needed libraries. Run only if
 overwriting current installations is not an issue. Note that `cubble`,
-`ggplot` and `ggnewscale` come from the GitHub repository.
+`ggplot` and `ggnewscale` come from the GitHub repository. `tmap` is
+installed from r-universe to work with version 4.
 
 ``` r
 pkgs = c(
@@ -94,6 +103,11 @@ install.packages(pkgs)
 remotes::install_github("huizezhang-sherry/cubble")
 remotes::install_github("tidyverse/ggplot2")
 remotes::install_github("eliocamp/ggnewscale")
+install.packages(
+  'tmap',
+  repos = c('https://r-tmap.r-universe.dev',
+            'https://cloud.r-project.org')
+)
 ```
 
 The libraries needed to reproduce this notebook are listed below.
@@ -110,6 +124,7 @@ library(readr) # read CSV files
 library(stars) # array VDCs
 library(stringr) # handle strings
 library(tidyr) # create tidy data
+library(tmap) # spatial visualisation
 library(tsibble) # handle time series data
 library(units) # set units
 library(zen4R) # download data from zenodo
@@ -278,11 +293,80 @@ download_zenodo(
   overwrite = FALSE,
   timeout = 600
 )
+```
 
+    [zen4R][INFO] ZenodoRecord - Download in sequential mode 
+    [zen4R][INFO] ZenodoRecord - Will download 1 file from record '7866738' (doi: '10.5281/zenodo.7866738') - total size: 2.3 MiB 
+    [zen4R][INFO] Downloading file 'outlines_pedersen_etal2022_v12.zip' - size: 2.3 MiB
+    [zen4R][INFO] File downloaded at 'C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk'.
+    [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
+    [zen4R][INFO] File 'outlines_pedersen_etal2022_v12.zip': integrity verified (md5sum: fc7a74d235274b9707bc5acb296b45ea)
+    [zen4R][INFO] ZenodoRecord - End of download 
+
+``` r
 # Unzip
 files = list.files(here(dir), full.names = TRUE)
 lapply(files, unzip, exdir = here(dir, "unzipped"))
+```
 
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    [[1]]
+    NULL
+
+    [[2]]
+    NULL
+
+    [[3]]
+    NULL
+
+    [[4]]
+    NULL
+
+    [[5]]
+    NULL
+
+    [[6]]
+     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
+     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
+     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
+     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
+     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
+     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
+     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
+    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
+    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
+    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
+    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
+    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
+    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
+    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
+    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
+    [22] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
+    [23] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
+    [24] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [25] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [26] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
+    [27] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
+    [28] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
+    [29] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [30] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
+
+``` r
 # Find geopackage files
 fn_gpkg = list.files(
   here(dir, "unzipped"),
@@ -647,7 +731,7 @@ the “Butangbunasi_OBIA_statistics.csv” also contains valuable
 information that can be join into the outline data frames.
 
 ``` r
-# Fetch also the CSV file with addiontional info
+# Fetch also the CSV file with additional info
 dir = tempdir()
 download_zenodo(
   doi = "10.5281/zenodo.10635102",
@@ -659,11 +743,155 @@ download_zenodo(
   overwrite = FALSE,
   timeout = 100
 )
+```
 
+    [zen4R][INFO] ZenodoRecord - Download in sequential mode 
+    [zen4R][INFO] ZenodoRecord - Will download 2 files from record '10635102' (doi: '10.5281/zenodo.10635102') - total size: 144 KiB 
+    [zen4R][INFO] Downloading file 'outlines.zip' - size: 142.7 KiB
+    [zen4R][INFO] Downloading file 'Butangbunasi_OBIA_statistics.csv' - size: 1.2 KiB
+    [zen4R][INFO] Files downloaded at 'C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk'.
+    [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
+    [zen4R][INFO] File 'outlines.zip': integrity verified (md5sum: d0034de915b5cae20d9be02899550e9a)
+    [zen4R][INFO] File 'Butangbunasi_OBIA_statistics.csv': integrity verified (md5sum: 8ebe12e999df3e41f862db5dc31a57e7)
+    [zen4R][INFO] ZenodoRecord - End of download 
+
+``` r
 # Unzip
 files = list.files(here(dir), full.names = TRUE)
 lapply(files, unzip, exdir = here(dir, "unzipped"))
+```
 
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
+    [[1]]
+    NULL
+
+    [[2]]
+    NULL
+
+    [[3]]
+    NULL
+
+    [[4]]
+    NULL
+
+    [[5]]
+    NULL
+
+    [[6]]
+    NULL
+
+    [[7]]
+    NULL
+
+    [[8]]
+    NULL
+
+    [[9]]
+    NULL
+
+    [[10]]
+    NULL
+
+    [[11]]
+    NULL
+
+    [[12]]
+    NULL
+
+    [[13]]
+    NULL
+
+    [[14]]
+    NULL
+
+    [[15]]
+     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_1984.gpkg"      
+     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_1989.gpkg"      
+     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_1990.gpkg"      
+     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_1992.gpkg"      
+     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_1994.gpkg"      
+     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_1996.gpkg"      
+     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_1998.gpkg"      
+     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2000.gpkg"      
+     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2001.gpkg"      
+    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2004.gpkg"      
+    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2005.gpkg"      
+    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2005_10_03.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2008.gpkg"      
+    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2008_03_17.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2009.gpkg"      
+    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2010.gpkg"      
+    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2013.gpkg"      
+    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2015.gpkg"      
+    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2016.gpkg"      
+    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2018.gpkg"      
+    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines/Butangbunasi_2021.gpkg"      
+
+    [[16]]
+     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
+     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
+     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
+     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
+     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
+     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
+     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
+    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
+    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
+    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
+    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
+    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
+    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
+    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
+    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
+    [22] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
+    [23] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
+    [24] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [25] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [26] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
+    [27] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
+    [28] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
+    [29] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [30] "C:/Users/b1066081/AppData/Local/Temp/RtmpAlBpYk/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
+
+    [[17]]
+    NULL
+
+``` r
 # Find geopackage files
 mapping_ls = list.files(
   here(dir, "unzipped", "outlines"), 
@@ -972,14 +1200,14 @@ dim_cent = st_dimensions(
 
 # Coerce to cube
 (cube_arr_ldsl = st_as_stars(
-  list(geometry = geom, area = area, sensor = sensor), 
+  list(geometry = geom, area = set_units(area, "ha"), sensor = sensor), 
   dimensions = dim_cent)
 )
 ```
 
     stars object with 3 dimensions and 3 attributes
     attribute(s):
-                  geometry       area            sensor          
+                  geometry     area [ha]         sensor          
      GEOMETRYCOLLECTION:53   Min.   :  3.328   Length:80         
      MULTIPOLYGON      :23   1st Qu.: 41.703   Class :character  
      POLYGON           : 4   Median :119.750   Mode  :character  
@@ -1006,8 +1234,16 @@ landslide example).
 
 For this format, we need to define a `key` and `index.` The key is the
 identifier of the spatial face of the cube while the index is the
-identifier of the temporal face. We then use `key = gid` and
-`index = time`.
+identifier of the temporal face. We then use `index = time` and we
+should use `key = geom_sum`. This works when creating the `cubble`
+object but the algorithm to display the temporal face gets stuck as it
+tries to add a WKT geometry to every entry. There is one “hack” to
+handle this when coercing from a `stars` object. Internally, `cubble`
+adds an `id` column to the data, so we can call `key = id` and the cube
+creation in its spatial and temporal forms will work. This is the
+approach we use for the lava flow VDC. For the landslide VDC we added
+the column class as the key, which becomes then the identifier. Better
+ways to handle this will be suggested to `cubble` in future work.
 
 ### Lava flow VDC
 
@@ -1069,9 +1305,9 @@ it is therefore determined if the time series has any gaps.
 
 For this VDC we will use the modified `sf` object for the landslide
 dataset. We have included here the version without the complete cases
-for the three dimensions because `cubble` throws an error for this.
-Further investigation into why this is the case will follow for future
-work.
+for the three dimensions because `cubble` throws an error for this
+(there is a duplication of indices). Further investigation into why this
+is the case will follow for future work.
 
 ``` r
 ## Create cubble
@@ -1080,8 +1316,31 @@ cube_tab_ldsl = as_cubble(
 )
 ```
 
-We can see the temporal and spatial faces of the cube. Here we note how
-the “lake” and “landslide” become the identifiers for the feature sets.
+The `cubble` creation is now based on the object with complete cases for
+every combination of `date` and `class`. This means `NA` values and
+empty geometries are included. However, we could also build the `cubble`
+without this `NA` values, and hence avoid data redundancy (note the
+dimensions of the tibble in the list-column `ts`.
+
+``` r
+as_cubble(
+  drop_na(outlines_ldsl_m), key = class, index = date
+)
+```
+
+    # cubble:   key: class [2], index: date, nested form, [sf]
+    # spatial:  [271664.917737363, 2567227.57526178, 274148.347513089,
+    #   2568861.92906261], WGS 84 / UTM zone 51N
+    # temporal: date [date], sensor [chr], area [[ha]], geom [MULTIPOLYGON [m]]
+      class           x        y           geom_sum ts               
+    * <chr>       <dbl>    <dbl>        <POINT [m]> <list>           
+    1 landslide 271665. 2568862. (271664.9 2568862) <tibble [20 × 4]>
+    2 lake      274148. 2567228. (274148.3 2567228) <tibble [7 × 4]> 
+
+For compatibility with the array format, we will keep the first approach
+as the tabular VDC. We can see the temporal and spatial faces of the
+cube. Here we note how the “lake” and “landslide” become the identifiers
+for the feature sets.
 
 ``` r
 cube_tab_ldsl |> 
@@ -1238,7 +1497,7 @@ cube_arr_ldsl |>
 
     stars object with 2 dimensions and 3 attributes
     attribute(s):
-                  geometry       area           sensor          
+                  geometry     area [ha]        sensor          
      GEOMETRYCOLLECTION:33   Min.   : 3.328   Length:40         
      MULTIPOLYGON      : 3   1st Qu.: 4.041   Class :character  
      POLYGON           : 4   Median : 5.312   Mode  :character  
@@ -1498,6 +1757,288 @@ explored for future implementations of the VDC concepts.
 
 ## Visualisation
 
+### Maps with array VDCs
+
+`stars` plot methods in base R are a fast way to inspect information in
+data cubes. For the VDC array implementation, however, the
+`plot.stars()` method does not work by default, as the inclusion of the
+geometry as an attribute is not supported.
+
+``` r
+plot(cube_arr_lf)
+```
+
+    Error in classInt::classIntervals(na.omit(values), min(nbreaks - 1, n.unq), : var is not numeric
+
+A workaround is to call the attribute directly, while if we want to
+perform operations in a pipeline and then plot we would need to use a
+lambda function.
+
+``` r
+oldpar = par(no.readonly = TRUE)
+par(mar = c(1,1,1,1), bg = "white")
+plot(cube_arr_lf$geometry)
+```
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-34-1.png)
+
+``` r
+cube_arr_lf |>
+  filter(datetime > "2021-03-18", datetime < "2021-03-25") |> 
+  (\(x) plot(x$geometry))()
+```
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-34-2.png)
+
+Tidyverse plotting methods, i.e., `ggplot`s implementation for stars
+`geom_stars()` also does not know how to handle this geometry attribute.
+
+``` r
+ggplot(cube_arr_lf) +
+  geom_stars()
+```
+
+    Error in `fortify()`:
+    ! `data` must be a <data.frame>, or an object coercible by `fortify()`,
+      or a valid <data.frame>-like object coercible by `as.data.frame()`.
+    Caused by error in `.prevalidate_data_frame_like_object()`:
+    ! `colnames(data)` must return a <character> of length `ncol(data)`.
+
+Here, going to the tabular approach is a better solution. A pre-step is
+to assign the geometry to the changing geometry instead of `geom_sum`.
+
+``` r
+cube_tab_lf |> 
+  face_temporal() |> 
+  # rearrange df for plot order
+  arrange(desc(datetime)) |> 
+  # assign sf column to changing geometry
+  (\(x) st_as_sf(x, sf_column_name = "geometry"))() |> 
+  ggplot() +
+  geom_sf()
+```
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-36-1.png)
+
+The advantage of using `ggplot2` is for example the use of facets.
+
+``` r
+cube_tab_lf |> 
+  face_temporal() |> 
+  # rearrange df for plot order
+  arrange(desc(datetime)) |> 
+  # assign sf column to changing geometry
+  (\(x) st_as_sf(x, sf_column_name = "geometry"))() |> 
+  ggplot() +
+  geom_sf() +
+  facet_wrap(~datetime) +
+  theme_void()
+```
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-37-1.png)
+
+Other plotting packages like tmap (v4) can also be used in this manner.
+
+``` r
+cube_tab_ldsl |> 
+  face_temporal() |> 
+  # rearrange df for plot order
+  arrange(desc(date)) |> 
+  # assign sf column to changing geometry
+  (\(x) st_as_sf(x, sf_column_name = "geom"))() |> 
+  tm_shape() +
+  tm_polygons(
+    fill = "date", fill_alpha = 0.9, col = "white", lwd = 0.3,
+    fill.scale = tm_scale(values = "-viridis")
+  ) +
+  tm_facets(columns = "class")
+```
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-38-1.png)
+
+### Multi-dimensional plot
+
+In the paper we included an example of a multi-dimensional visualisation
+of the VDC data. This was achieved by adding a distortion to the
+geometries to make them appear stacked over each other.
+
+``` r
+# Create shear matrix
+sm = matrix(c(2.5, 1.2, 0, 1), 2, 2)
+
+# Apply shear matrix
+ldsl_shear = outlines_ldsl |>
+  mutate(
+    geom = geom * sm,
+    # sequence along date, i.e. 1 to 20 per class
+    shift_y = rep(
+      1:length(unique(date)),
+      each = length(unique(class))
+    )
+  ) |> 
+  # Add lost crs
+  st_set_crs(st_crs(outlines_ldsl)) 
+
+ldsl_shift = ldsl_shear |> 
+  rowwise() |> 
+  # add a shift to stack outlines on top of each other
+  mutate(
+    geom = geom + c(0, shift_y * 4000),
+    # Marker to place date labels
+    y_label = st_coordinates(st_centroid(geom))[,'Y']
+  ) |> 
+  ungroup() |> 
+  st_as_sf()
+
+ggplot(ldsl_shift) +
+  # plot landslide geometries
+  geom_sf(
+    data = filter(ldsl_shift, class == "landslide"),
+    aes(fill = date), 
+    color = "black",
+    show.legend = FALSE
+  ) +
+  # plot lake geometries
+  geom_sf(
+    data = filter(ldsl_shift, class == "lake"),
+    color = "red", fill = "pink",
+    show.legend = FALSE
+  ) +
+  # Add date label, the value of x is added after visual inspection
+  geom_text(
+    data = filter(ldsl_shift, class == "landslide"),
+    aes(label = date, y = y_label),
+    x = 3751500, size = 3.5
+  ) +
+  scale_fill_viridis_c("Date", direction = 1, trans = "date", option = "D") +
+  # Limits are expanded after visual inspection
+  coord_sf(xlim = c(3745000, 3767000), ylim = c(2575500, 2647200), clip = "off") +
+  theme_void()+
+  theme(
+    text = element_text(size = 18)
+  )
+```
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-39-1.png)
+
+We hope that future work allows us to address the unsupported features
+of VDC maps for standard plotting methods like base R, `ggplot2` and
+`tmap` and that we can add more visualisation options like the
+multi-dimensional plot.
+
+### Time series plots
+
+As we are working with spatio-temporal data, to visualise the time
+component comes as natural. We can extract information both from the
+array and tabular format to do so.
+
+``` r
+par(mar = c(4,5,1,1))
+plot(
+  cube_arr_ldsl$area,
+  col = rep(c('deepskyblue3','peru'), 10),
+  pch = 19
+)
+```
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-40-1.png)
+
+If we want to use tidyverse methods, the tabular VDC presents a more
+straightforward syntax.
+
+``` r
+cube_tab_ldsl |> 
+  face_temporal() |> 
+  ggplot() +
+  aes(
+    x = date, y = area,
+    color = date,
+    shape = sensor, 
+    group = class
+  ) +
+  geom_point() + geom_line() +
+  scale_color_viridis_c(
+    "Date", direction = 1,
+    trans = "date", option = "D"
+  ) 
+```
+
+    Warning: The `scale_name` argument of `continuous_scale()` is deprecated as of ggplot2
+    3.5.0.
+
+    Warning: Removed 13 rows containing missing values or values outside the scale range
+    (`geom_point()`).
+
+    Warning: Removed 2 rows containing missing values or values outside the scale range
+    (`geom_line()`).
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-41-1.png)
+
+### Glyph maps
+
+`cubble` includes glyph maps as one of their main features. The idea is
+to summarise time series data in a map format. The concept works as an
+innovative way to communicate spatio-temporal variation.
+
+Here we have used it to show the landslides and lake area time series.
+The glyphs are located in the `geom_sum` coordinates. This type of
+visualisation becomes handy when dealing with several feature sets in an
+area and to have a fast overview of large changes per location. We
+included the landslide and lake delineations as background for
+reference.
+
+``` r
+cube_tab_ldsl |> 
+  face_temporal() |> 
+  # make the x and y coordinates explicit on the temporal table 
+  # to pass onto ggplot aesthetics
+  unfold(x, y) |> 
+  ggplot() +
+  # add delineations as background for reference
+  geom_sf(
+    data = st_as_sf(face_temporal(cube_tab_ldsl), sf_column_name = "geom"),
+    inherit.aes = F, fill = NA,
+    aes(color = class), 
+    show.legend = T
+  ) +
+  scale_color_manual("Landform type", values = c("deepskyblue3", "peru")) +
+  new_scale_color() +
+  # map aesthetics for glyph maps
+  aes(x_major = x, y_major = y,
+      x_minor = date, 
+      y_minor = unclass(area)) +
+  # plot glyphs
+  geom_glyph_box(
+    width = 510, height = 400,
+    color = "black", linewidth = 0.1
+  ) +
+  geom_glyph(
+    width = 500,  height = 390,
+    aes(color = drop_units(set_units(area, "km^2")))
+  ) +
+  scale_color_viridis_c(
+    expression("Area [ha]"),
+    direction = 1, option = "D"
+  ) +
+  # bring CRS back
+  coord_sf(
+    crs = st_crs(cube_tab_ldsl)
+  ) +
+  theme_void() 
+```
+
+    Warning: Removed 13 rows containing missing values or values outside the scale range
+    (`geom_glyph_box()`).
+
+    Warning: Removed 13 rows containing missing values or values outside the scale range
+    (`geom_glyph()`).
+
+![](vdc-showcase_files/figure-commonmark/unnamed-chunk-42-1.png)
+
+``` r
+par(oldpar)
+```
+
 # References
 
 <div id="refs" class="references csl-bib-body hanging-indent"
@@ -1550,26 +2091,32 @@ sessionInfo()
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-     [1] zen4R_0.9          units_0.8-5.3      tsibble_1.1.4      tidyr_1.3.1       
-     [5] stringr_1.5.1      stars_0.6-5        sf_1.0-15          abind_1.4-5       
-     [9] readr_2.1.4        purrr_1.0.2        patchwork_1.2.0    here_1.0.1        
-    [13] ggnewscale_0.4.10  ggplot2_3.4.4.9000 dplyr_1.1.4        cubble_0.3.0      
+     [1] zen4R_0.9          units_0.8-5.3      tsibble_1.1.4      tmap_4.0          
+     [5] tidyr_1.3.1        stringr_1.5.1      stars_0.6-5        sf_1.0-15         
+     [9] abind_1.4-5        readr_2.1.4        purrr_1.0.2        patchwork_1.2.0   
+    [13] here_1.0.1         ggnewscale_0.4.10  ggplot2_3.4.4.9000 dplyr_1.1.4       
+    [17] cubble_0.3.0      
 
     loaded via a namespace (and not attached):
-     [1] gtable_0.3.4       anytime_0.3.9      cubelyr_1.0.2      xfun_0.40         
-     [5] rdflib_0.2.8       tzdb_0.4.0         vctrs_0.6.5        tools_4.3.1       
-     [9] generics_0.1.3     curl_5.0.2         parallel_4.3.1     tibble_3.2.1      
-    [13] proxy_0.4-27       fansi_1.0.6        pkgconfig_2.0.3    KernSmooth_2.23-22
-    [17] redland_1.0.17-17  assertthat_0.2.1   lifecycle_1.0.4    farver_2.1.1      
-    [21] compiler_4.3.1     atom4R_0.3-3       munsell_0.5.0      keyring_1.3.1     
-    [25] ncdf4_1.22         htmltools_0.5.7    class_7.3-22       yaml_2.3.8        
-    [29] crayon_1.5.2       pillar_1.9.0       ellipsis_0.3.2     classInt_0.4-10   
-    [33] zip_2.3.0          tidyselect_1.2.0   digest_0.6.33      stringi_1.8.3     
-    [37] rprojroot_2.0.3    fastmap_1.1.1      grid_4.3.1         colorspace_2.1-0  
-    [41] cli_3.6.2          magrittr_2.0.3     XML_3.99-0.16      utf8_1.2.4        
-    [45] e1071_1.7-14       withr_3.0.0        scales_1.3.0       bit64_4.0.5       
-    [49] lubridate_1.9.3    timechange_0.3.0   roxygen2_7.2.3     rmarkdown_2.25    
-    [53] httr_1.4.7         bit_4.0.5          hms_1.1.3          evaluate_0.23     
-    [57] knitr_1.45         viridisLite_0.4.2  rlang_1.1.3        Rcpp_1.0.11       
-    [61] glue_1.7.0         DBI_1.2.1          xml2_1.3.5         vroom_1.6.3       
-    [65] rstudioapi_0.15.0  jsonlite_1.8.8     R6_2.5.1          
+     [1] DBI_1.2.1          tmaptools_3.1-1    rlang_1.1.3        magrittr_2.0.3    
+     [5] cubelyr_1.0.2      e1071_1.7-14       compiler_4.3.1     roxygen2_7.2.3    
+     [9] png_0.1-8          vctrs_0.6.5        pkgconfig_2.0.3    crayon_1.5.2      
+    [13] fastmap_1.1.1      ellipsis_0.3.2     labeling_0.4.3     lwgeom_0.2-13     
+    [17] leafem_0.2.3       utf8_1.2.4         rmarkdown_2.25     tzdb_0.4.0        
+    [21] anytime_0.3.9      bit_4.0.5          xfun_0.40          jsonlite_1.8.8    
+    [25] terra_1.7-71       parallel_4.3.1     R6_2.5.1           stringi_1.8.3     
+    [29] RColorBrewer_1.1-3 rdflib_0.2.8       lubridate_1.9.3    Rcpp_1.0.11       
+    [33] assertthat_0.2.1   knitr_1.45         base64enc_0.1-3    timechange_0.3.0  
+    [37] tidyselect_1.2.0   rstudioapi_0.15.0  dichromat_2.0-0.1  yaml_2.3.8        
+    [41] codetools_0.2-19   curl_5.0.2         lattice_0.21-8     tibble_3.2.1      
+    [45] leafsync_0.1.0     withr_3.0.0        evaluate_0.23      proxy_0.4-27      
+    [49] zip_2.3.0          xml2_1.3.5         pillar_1.9.0       KernSmooth_2.23-22
+    [53] ncdf4_1.22         generics_0.1.3     vroom_1.6.3        rprojroot_2.0.3   
+    [57] sp_2.1-3           hms_1.1.3          munsell_0.5.0      scales_1.3.0      
+    [61] class_7.3-22       glue_1.7.0         tools_4.3.1        leaflegend_1.1.1  
+    [65] data.table_1.15.0  XML_3.99-0.16      grid_4.3.1         crosstalk_1.2.1   
+    [69] colorspace_2.1-0   cols4all_0.6       raster_3.6-26      cli_3.6.2         
+    [73] atom4R_0.3-3       fansi_1.0.6        viridisLite_0.4.2  keyring_1.3.1     
+    [77] gtable_0.3.4       digest_0.6.33      widgetframe_0.3.1  redland_1.0.17-17 
+    [81] classInt_0.4-10    farver_2.1.1       htmlwidgets_1.6.4  htmltools_0.5.7   
+    [85] lifecycle_1.0.4    leaflet_2.2.1      httr_1.4.7         bit64_4.0.5       
