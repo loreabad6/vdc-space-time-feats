@@ -12,14 +12,15 @@ Note that, to reproduce, some packages require the development version fetched f
 #| message: false
 #| warning: false
 pkgs = c(
-  "dplyr","ggplot2","here","patchwork","purrr",
-  "readr","stars","stringr",
+  "dplyr","ggplot2","here","patchwork",
+  "purrr","readr","stringr",
   "tidyr","units","zen4R"
 )
 install.packages(pkgs)
 remotes::install_github("huizezhang-sherry/cubble")
 remotes::install_github("eliocamp/ggnewscale")
 remotes::install_github("r-spatial/sf")
+remotes::install_github("r-spatial/stars")
 ```
 
 # Libraries 
@@ -34,6 +35,7 @@ library(here)
 library(patchwork)
 library(purrr)
 library(readr)
+library(sf)
 library(stars)
 library(stringr)
 library(tidyr)

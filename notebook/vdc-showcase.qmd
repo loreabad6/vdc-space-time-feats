@@ -24,7 +24,7 @@ These experiments are performed in R v. 4.3.2 and further details on library ver
 # Libraries
 
 The following chunk installs the needed libraries. Run only if overwriting current installations is not an issue. 
-Note that `cubble`, `ggplot` and `ggnewscale` come from the GitHub repository.
+Note that `cubble` and `ggnewscale` come from the GitHub repository.
 `tmap` is installed from r-universe to work with version 4.
 
 ```{r}
@@ -32,14 +32,15 @@ Note that `cubble`, `ggplot` and `ggnewscale` come from the GitHub repository.
 #| message: false
 #| warning: false
 pkgs = c(
-  "dplyr","here","patchwork","purrr",
-  "readr","stars","stringr",
+  "dplyr","ggplot2","here","patchwork",
+  "purrr","readr","stringr",
   "tidyr","tsibble","units","zen4R"
 )
 install.packages(pkgs)
 remotes::install_github("huizezhang-sherry/cubble")
-remotes::install_github("tidyverse/ggplot2")
 remotes::install_github("eliocamp/ggnewscale")
+remotes::install_github("r-spatial/sf")
+remotes::install_github("r-spatial/stars")
 install.packages(
   'tmap',
   repos = c('https://r-tmap.r-universe.dev',
@@ -60,6 +61,7 @@ library(here) # manage current directory
 library(patchwork) # plot composer
 library(purrr) # functional programming 
 library(readr) # read CSV files
+library(sf) # read vector files
 library(stars) # array VDCs
 library(stringr) # handle strings
 library(tidyr) # create tidy data
@@ -134,7 +136,8 @@ fn_gpkg = list.files(
 ```{r}
 #| label: temporarychunklfdata
 #| eval: false
-data_dir = here("data", "raw", "lava-flows",
+#| echo: false
+data_dir = here("data", "raw", "lava_flows",
                 "fagradalsfjall")
 fn_gpkg = list.files(
   here(data_dir, "unzipped"),
@@ -264,6 +267,7 @@ mapping_ls = list.files(
 ```{r}
 #| label: temporarychunkldsldata
 #| eval: false
+#| echo: false
 dir = here("data", "raw", "landslides",
                 "butangbunasi")
 mapping_ls = list.files(
@@ -600,15 +604,19 @@ cube_tab_lf |>
 Subsetting refers to lookup operations via an index.
 A way to subset a cube is to use the slice verb. 
 Similar results can be achieved with `[`, but the syntax is not so intuitive and we need to know the dimension order.
-When a dimension after slicing has a single index it is dropped by default.
-Note how the number of geometries in the attributes changes.
+<!-- When a dimension after slicing has a single index it is dropped by default. -->
+<!-- Note how the number of geometries in the attributes changes. -->
 
 ```{r}
 cube_arr_lf |> 
   slice(index = 3:12, along = "datetime")
 
 cube_arr_lf[,,3:12]
+```
 
+```{r}
+#| echo: false
+#| eval: false
 cube_arr_ldsl |> 
   slice(index = 1, along = "class")
 ```
