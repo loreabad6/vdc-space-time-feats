@@ -1,5 +1,6 @@
 # Computational notebook
 
+
 - [<span class="toc-section-number">1</span> Context](#context)
 - [<span class="toc-section-number">2</span> Libraries](#libraries)
 - [<span class="toc-section-number">3</span> Data and
@@ -299,7 +300,7 @@ download_zenodo(
     [zen4R][INFO] ZenodoRecord - Download in sequential mode 
     [zen4R][INFO] ZenodoRecord - Will download 1 file from record '7866738' (doi: '10.5281/zenodo.7866738') - total size: 2.3 MiB 
     [zen4R][INFO] Downloading file 'outlines_pedersen_etal2022_v12.zip' - size: 2.3 MiB
-    [zen4R][INFO] File downloaded at '/tmp/RtmpfnmvLL'.
+    [zen4R][INFO] File downloaded at 'C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU'.
     [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
     [zen4R][INFO] File 'outlines_pedersen_etal2022_v12.zip': integrity verified (md5sum: fc7a74d235274b9707bc5acb296b45ea)
     [zen4R][INFO] ZenodoRecord - End of download 
@@ -310,37 +311,58 @@ files = list.files(here(dir), full.names = TRUE)
 lapply(files, unzip, exdir = here(dir, "unzipped"))
 ```
 
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+
     [[1]]
-     [1] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
-     [2] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
-     [3] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [4] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
-     [5] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
-     [6] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
-     [7] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
-     [8] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [9] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
-    [10] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
-    [11] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
-    [12] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
-    [13] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
-    [14] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
-    [15] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
-    [16] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [17] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
-    [18] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [19] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
-    [20] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
-    [21] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
-    [22] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
-    [23] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
-    [24] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [25] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [26] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
-    [27] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
-    [28] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
-    [29] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [30] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
+    NULL
+
+    [[2]]
+    NULL
+
+    [[3]]
+    NULL
+
+    [[4]]
+    NULL
+
+    [[5]]
+    NULL
+
+    [[6]]
+     [1] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
+     [2] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
+     [3] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [4] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
+     [5] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
+     [6] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
+     [7] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
+     [8] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [9] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
+    [10] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
+    [11] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
+    [12] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
+    [14] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
+    [16] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [17] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
+    [18] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [19] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
+    [20] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
+    [21] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
+    [22] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
+    [23] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
+    [24] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [25] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [26] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
+    [27] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
+    [28] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
+    [29] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [30] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
 
 ``` r
 # Find geopackage files
@@ -714,7 +736,7 @@ download_zenodo(
     [zen4R][INFO] ZenodoRecord - Will download 2 files from record '10635102' (doi: '10.5281/zenodo.10635102') - total size: 144 KiB 
     [zen4R][INFO] Downloading file 'outlines.zip' - size: 142.7 KiB
     [zen4R][INFO] Downloading file 'Butangbunasi_OBIA_statistics.csv' - size: 1.2 KiB
-    [zen4R][INFO] Files downloaded at '/tmp/RtmpfnmvLL'.
+    [zen4R][INFO] Files downloaded at 'C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU'.
     [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
     [zen4R][INFO] File 'outlines.zip': integrity verified (md5sum: d0034de915b5cae20d9be02899550e9a)
     [zen4R][INFO] File 'Butangbunasi_OBIA_statistics.csv': integrity verified (md5sum: 8ebe12e999df3e41f862db5dc31a57e7)
@@ -727,68 +749,119 @@ lapply(files, unzip, exdir = here(dir, "unzipped"))
 ```
 
     Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
+    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
     Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
 
     [[1]]
     NULL
 
     [[2]]
-     [1] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
-     [2] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
-     [3] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [4] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
-     [5] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
-     [6] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
-     [7] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
-     [8] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [9] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
-    [10] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
-    [11] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
-    [12] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
-    [13] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
-    [14] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
-    [15] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
-    [16] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [17] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
-    [18] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [19] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
-    [20] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
-    [21] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
-    [22] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
-    [23] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
-    [24] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [25] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [26] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
-    [27] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
-    [28] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
-    [29] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [30] "/tmp/RtmpfnmvLL/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
+    NULL
 
     [[3]]
-     [1] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_1984.gpkg"      
-     [2] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_1989.gpkg"      
-     [3] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_1990.gpkg"      
-     [4] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_1992.gpkg"      
-     [5] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_1994.gpkg"      
-     [6] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_1996.gpkg"      
-     [7] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_1998.gpkg"      
-     [8] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2000.gpkg"      
-     [9] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2001.gpkg"      
-    [10] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2004.gpkg"      
-    [11] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2005.gpkg"      
-    [12] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2005_10_03.gpkg"
-    [13] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2008.gpkg"      
-    [14] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2008_03_17.gpkg"
-    [15] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2009.gpkg"      
-    [16] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2010.gpkg"      
-    [17] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2013.gpkg"      
-    [18] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2015.gpkg"      
-    [19] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2016.gpkg"      
-    [20] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2018.gpkg"      
-    [21] "/tmp/RtmpfnmvLL/unzipped/outlines/Butangbunasi_2021.gpkg"      
+    NULL
 
     [[4]]
+    NULL
+
+    [[5]]
+    NULL
+
+    [[6]]
+    NULL
+
+    [[7]]
+    NULL
+
+    [[8]]
+    NULL
+
+    [[9]]
+    NULL
+
+    [[10]]
+    NULL
+
+    [[11]]
+    NULL
+
+    [[12]]
+    NULL
+
+    [[13]]
+    NULL
+
+    [[14]]
+    NULL
+
+    [[15]]
+     [1] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_1984.gpkg"      
+     [2] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_1989.gpkg"      
+     [3] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_1990.gpkg"      
+     [4] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_1992.gpkg"      
+     [5] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_1994.gpkg"      
+     [6] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_1996.gpkg"      
+     [7] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_1998.gpkg"      
+     [8] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2000.gpkg"      
+     [9] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2001.gpkg"      
+    [10] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2004.gpkg"      
+    [11] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2005.gpkg"      
+    [12] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2005_10_03.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2008.gpkg"      
+    [14] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2008_03_17.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2009.gpkg"      
+    [16] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2010.gpkg"      
+    [17] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2013.gpkg"      
+    [18] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2015.gpkg"      
+    [19] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2016.gpkg"      
+    [20] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2018.gpkg"      
+    [21] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines/Butangbunasi_2021.gpkg"      
+
+    [[16]]
+     [1] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
+     [2] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
+     [3] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [4] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
+     [5] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
+     [6] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
+     [7] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
+     [8] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [9] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
+    [10] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
+    [11] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
+    [12] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
+    [14] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
+    [16] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [17] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
+    [18] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [19] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
+    [20] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
+    [21] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
+    [22] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
+    [23] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
+    [24] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [25] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [26] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
+    [27] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
+    [28] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
+    [29] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [30] "C:/Users/b1066081/AppData/Local/Temp/Rtmpu2LboU/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
+
+    [[17]]
     NULL
 
 ``` r
@@ -1265,7 +1338,7 @@ cube_tab_ldsl |>
      5 lake  1994-09-03 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
      6 lake  1996-08-23 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
      7 lake  1998-11-01 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
-     8 lake  2000-09-27 Landsat 7  6.88 MULTIPOLYGON (((273925 2566782, 273862.5 25…
+     8 lake  2000-09-27 Landsat 7  6.88 MULTIPOLYGON (((273925 2566783, 273862.5 25…
      9 lake  2001-09-14 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
     10 lake  2004-07-12 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
     # ℹ 30 more rows
@@ -1615,9 +1688,9 @@ cube_tab_ldsl |>
      5 landslide 1994-09-03 Landsat 5  94.1 (((273500 2566820, 273462.5 2566… -27.4 
      6 landslide 1996-08-23 Landsat 5 118.  (((273462.5 2566820, 273462.5 25…  23.7 
      7 landslide 1998-11-01 Landsat 5  96.3 (((273775 2566820, 273712.5 2566… -21.5 
-     8 landslide 2000-09-27 Landsat 7 120.  (((273500 2566782, 273500 256682…  23.4 
+     8 landslide 2000-09-27 Landsat 7 120.  (((273500 2566783, 273500 256682…  23.4 
      9 landslide 2001-09-14 Landsat 7 121.  (((273825 2566820, 273825 256678…   1.22
-    10 landslide 2004-07-12 Landsat 5 123.  (((273825 2566932, 273862.5 2566…   2.31
+    10 landslide 2004-07-12 Landsat 5 123.  (((273825 2566933, 273862.5 2566…   2.31
     # ℹ 30 more rows
 
 Functions like spatial filtering and data aggregations would become more
@@ -1906,7 +1979,8 @@ par(oldpar)
 
 # References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-Hoelbling_2024_Butangbunasidata" class="csl-entry">
 
@@ -1924,7 +1998,8 @@ Magnús Tumi Gudmundsson, Nils Gies, Thórdís Högnadóttir, Ásta Rut
 Hjartardóttir, et al. 2023. “Digital Elevation Models, Orthoimages and
 Lava Outlines of the 2021 Fagradalsfjall Eruption: Results from Near
 Real-Time Photogrammetric Monitoring.” Zenodo.
-<https://doi.org/10.5281/zenodo.7866738>.
+[https://doi.org/10.5281/zenodo.7866738
+](https://doi.org/10.5281/zenodo.7866738 ).
 
 </div>
 
@@ -1936,55 +2011,59 @@ Real-Time Photogrammetric Monitoring.” Zenodo.
 sessionInfo()
 ```
 
-    R version 4.3.2 (2023-10-31)
-    Platform: x86_64-pc-linux-gnu (64-bit)
-    Running under: Ubuntu 22.04.3 LTS
+    R version 4.4.0 (2024-04-24 ucrt)
+    Platform: x86_64-w64-mingw32/x64
+    Running under: Windows 10 x64 (build 19045)
 
     Matrix products: default
-    BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-    LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
+
 
     locale:
-     [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-     [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-     [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-     [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-     [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-    [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+    [1] LC_COLLATE=English_Austria.utf8  LC_CTYPE=English_Austria.utf8   
+    [3] LC_MONETARY=English_Austria.utf8 LC_NUMERIC=C                    
+    [5] LC_TIME=English_Austria.utf8    
 
-    time zone: Etc/UTC
-    tzcode source: system (glibc)
+    time zone: Europe/Vienna
+    tzcode source: internal
 
     attached base packages:
     [1] stats     graphics  grDevices utils     datasets  methods   base     
 
     other attached packages:
-     [1] zen4R_0.9         units_0.8-5       tsibble_1.1.4     tmap_3.99.9000   
-     [5] tidyr_1.3.1       stringr_1.5.1     stars_0.6-5       abind_1.4-5      
-     [9] sf_1.0-16         readr_2.1.4       purrr_1.0.2       patchwork_1.2.0  
-    [13] here_1.0.1        ggnewscale_0.4.10 ggplot2_3.5.0     dplyr_1.1.4      
+     [1] zen4R_0.9         units_0.8-5.3     tsibble_1.1.4     tmap_4.0         
+     [5] tidyr_1.3.1       stringr_1.5.1     stars_0.6-6       abind_1.4-5      
+     [9] sf_1.0-16         readr_2.1.5       purrr_1.0.2       patchwork_1.2.0  
+    [13] here_1.0.1        ggnewscale_0.4.10 ggplot2_3.5.1     dplyr_1.1.4      
     [17] cubble_0.3.0     
 
     loaded via a namespace (and not attached):
-     [1] DBI_1.2.2          tmaptools_3.1-1    rlang_1.1.3        magrittr_2.0.3    
-     [5] cubelyr_1.0.2      e1071_1.7-14       compiler_4.3.2     roxygen2_7.2.3    
-     [9] png_0.1-8          vctrs_0.6.5        pkgconfig_2.0.3    crayon_1.5.2      
-    [13] fastmap_1.1.1      ellipsis_0.3.2     labeling_0.4.3     lwgeom_0.2-13     
-    [17] leafem_0.2.3       utf8_1.2.4         rmarkdown_2.25     tzdb_0.4.0        
-    [21] anytime_0.3.9      bit_4.0.5          xfun_0.41          jsonlite_1.8.8    
-    [25] terra_1.7-55       parallel_4.3.2     R6_2.5.1           stringi_1.8.3     
-    [29] RColorBrewer_1.1-3 rdflib_0.2.7       lubridate_1.9.3    Rcpp_1.0.12       
-    [33] assertthat_0.2.1   knitr_1.45         base64enc_0.1-3    timechange_0.3.0  
-    [37] tidyselect_1.2.0   rstudioapi_0.15.0  dichromat_2.0-0.1  yaml_2.3.7        
-    [41] codetools_0.2-19   curl_5.1.0         lattice_0.21-9     tibble_3.2.1      
-    [45] leafsync_0.1.0     withr_3.0.0        evaluate_0.23      proxy_0.4-27      
-    [49] zip_2.3.0          xml2_1.3.6         pillar_1.9.0       KernSmooth_2.23-22
-    [53] ncdf4_1.22         generics_0.1.3     vroom_1.6.4        rprojroot_2.0.3   
-    [57] sp_2.1-2           hms_1.1.3          munsell_0.5.0      scales_1.3.0      
-    [61] class_7.3-22       glue_1.7.0         tools_4.3.2        leaflegend_1.2.0  
-    [65] data.table_1.14.8  XML_3.99-0.16      grid_4.3.2         crosstalk_1.2.1   
-    [69] colorspace_2.1-0   cols4all_0.7       raster_3.6-26      cli_3.6.2         
-    [73] atom4R_0.3-3       fansi_1.0.6        viridisLite_0.4.2  keyring_1.3.2     
-    [77] gtable_0.3.4       digest_0.6.33      widgetframe_0.3.1  redland_1.0.17-17 
-    [81] classInt_0.4-10    farver_2.1.1       htmlwidgets_1.6.2  htmltools_0.5.6.1 
-    [85] lifecycle_1.0.4    leaflet_2.2.1      httr_1.4.7         bit64_4.0.5       
+     [1] DBI_1.2.2             tmaptools_3.1-1       rlang_1.1.3          
+     [4] magrittr_2.0.3        cubelyr_1.0.2         e1071_1.7-14         
+     [7] compiler_4.4.0        roxygen2_7.3.1        png_0.1-8            
+    [10] vctrs_0.6.5           crayon_1.5.2          pkgconfig_2.0.3      
+    [13] fastmap_1.1.1         ellipsis_0.3.2        labeling_0.4.3       
+    [16] lwgeom_0.2-14         leafem_0.2.3          utf8_1.2.4           
+    [19] rmarkdown_2.26        tzdb_0.4.0            anytime_0.3.9        
+    [22] spacesXYZ_1.3-0       bit_4.0.5             xfun_0.43            
+    [25] jsonlite_1.8.8        terra_1.7-71          parallel_4.4.0       
+    [28] R6_2.5.1              stringi_1.8.4         RColorBrewer_1.1-3   
+    [31] rdflib_0.2.8          lubridate_1.9.3       Rcpp_1.0.12          
+    [34] assertthat_0.2.1      knitr_1.46            base64enc_0.1-3      
+    [37] timechange_0.3.0      tidyselect_1.2.1      rstudioapi_0.16.0    
+    [40] dichromat_2.0-0.1     yaml_2.3.8            codetools_0.2-20     
+    [43] curl_5.2.1            lattice_0.22-6        tibble_3.2.1         
+    [46] leafsync_0.1.0        withr_3.0.0           evaluate_0.23        
+    [49] proxy_0.4-27          zip_2.3.1             xml2_1.3.6           
+    [52] pillar_1.9.0          KernSmooth_2.23-22    ncdf4_1.22           
+    [55] generics_0.1.3        vroom_1.6.5           rprojroot_2.0.4      
+    [58] sp_2.1-4              hms_1.1.3             munsell_0.5.1        
+    [61] scales_1.3.0          class_7.3-22          glue_1.7.0           
+    [64] tools_4.4.0           leaflegend_1.2.0      data.table_1.15.4    
+    [67] XML_3.99-0.16.1       grid_4.4.0            crosstalk_1.2.1      
+    [70] colorspace_2.1-0      cols4all_0.7-1        raster_3.6-26        
+    [73] cli_3.6.2             atom4R_0.3-3          fansi_1.0.6          
+    [76] viridisLite_0.4.2     keyring_1.3.2         gtable_0.3.5         
+    [79] digest_0.6.35         widgetframe_0.3.1     redland_1.0.17-18    
+    [82] classInt_0.4-10       farver_2.1.1          htmlwidgets_1.6.4    
+    [85] htmltools_0.5.8.1     lifecycle_1.0.4       leaflet_2.2.2        
+    [88] httr_1.4.7            microbenchmark_1.4.10 bit64_4.0.5          

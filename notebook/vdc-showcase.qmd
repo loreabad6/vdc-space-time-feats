@@ -7,8 +7,6 @@ format:
     toc-depth: 3
     number-sections: true
     fig-dpi: 300
-editor_options: 
-  chunk_output_type: console
 ---
 
 # Context
