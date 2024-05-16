@@ -433,8 +433,8 @@ spaceplot + area + guide_area() +
   plot_annotation(tag_levels = "a", tag_suffix = ")")
 ```
 
-# R Session Info
+# R Session Info {#sec-session}
 
 ```{r}
-sessionInfo()
+sessioninfo::session_info()
 ```

@@ -706,11 +706,15 @@ A workaround is to call the attribute directly, while if we want to perform oper
 oldpar = par(no.readonly = TRUE)
 par(mar = c(1,1,1,1), bg = "white")
 plot(cube_arr_lf$geometry)
+```
 
+```{r}
+par(mar = c(1,1,1,1), bg = "white")
 cube_arr_lf |>
   filter(datetime > "2021-03-18", datetime < "2021-03-25") |> 
   (\(x) plot(x$geometry))()
 ```
+
 
 Tidyverse plotting methods, i.e., `ggplot`s implementation for stars `geom_stars()` also does not know how to handle this geometry attribute.
 
@@ -931,5 +935,5 @@ par(oldpar)
 # R Session Info {#sec-session}
 
 ```{r}
-sessionInfo()
+sessioninfo::session_info()
 ```
