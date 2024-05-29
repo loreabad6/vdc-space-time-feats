@@ -1,0 +1,29 @@
+/*-- scss:defaults --*/
+
+// fonts
+
+// colors
+$body-bg: #ffffff !default;
+$body-color: #000 !default;
+$link-color: #00a1c7 !default;
+$selection-bg: #b8f1ff !default;
+
+/*-- scss:rules --*/
+
+.reveal .slide aside, .reveal .slide div.aside {
+    font-size: 0.4em;
+    bottom: 10px;
+}
+
+// Slide numbers to the bottom-left
+.slide-number, .reveal.has-logo .slide-number {
+  bottom: 14px !important;
+  right: 50px !important;
+  top: unset !important;
+  color: #777777 !important;
+}
+
+// Align captions: 
+.caption{
+   text-align: center;
+};
