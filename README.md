@@ -8,15 +8,15 @@ Abad, L., Sudmanns, M., and Hölbling, D.: Vector data cubes for features evolvi
 
 ## Software documentation:
 
-### [Reproduce manuscript figures](code/manuscript-figures.html)
+### [Reproduce manuscript figures](https://loreabad6.github.io/vdc-space-time-feats/code/manuscript-figures.html)
 
 The directory [`/code`](/code) contains a Quarto file [manuscript-figures.qmd](code/manuscript-figures.qmd) to recreate the figures from the manuscript.
 The data for the figures comes from Zenodo and is downloaded with the code above.
-This file has been rendered to a Quarto output ([manuscript-figures.html](code/manuscript-figures.html)) to easily explore the rendered code. 
+This file has been rendered to a Quarto output ([manuscript-figures.html](https://loreabad6.github.io/vdc-space-time-feats/code/manuscript-figures.html)) or [manuscript-figures.md](code/manuscript-figures.md) to easily explore the rendered code. 
 
-### [VDC showcase notebook](notebook/vdc-showcase.html)
+### [VDC showcase notebook](https://loreabad6.github.io/vdc-space-time-feats/notebook/vdc-showcase.html)
 
-The directory [`/notebook`](/notebook) contains a computational notebook written in Quarto [vdc-showcase.qmd](notebook/vdc-showcase.qmd) that documents the creation of vector data cubes (VDC) for features that evolve in space and time, namely, lava flows and landslides, as presented in the manuscript. The notebook contains further examples of the usage of VDCs, beyond the ones included in the manuscript. See [vdc-showcase.html](notebook/vdc-showcase.html) for a rendered version.
+The directory [`/notebook`](/notebook) contains a computational notebook written in Quarto [vdc-showcase.qmd](notebook/vdc-showcase.qmd) that documents the creation of vector data cubes (VDC) for features that evolve in space and time, namely, lava flows and landslides, as presented in the manuscript. The notebook contains further examples of the usage of VDCs, beyond the ones included in the manuscript. See [vdc-showcase.html](https://loreabad6.github.io/vdc-space-time-feats/notebook/vdc-showcase.html) or  [vdc-showcase.md](notebook/vdc-showcase.md)for a rendered version.
 
 At the end of both files, the output of `sessioninfo::sessioninfo()` is included to document set-up information such as software and packages used.
 
