@@ -1,6 +1,11 @@
 ---
 format: 
   gfm: default
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    fig-dpi: 300
 ---
 
 # Install packages
