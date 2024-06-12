@@ -1,0 +1,32 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Code and data for "Vector data cubes for features evolving
+  in space and time" at AGILE 2024
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Lorena
+    family-names: Abad Crespo
+    email: lorena.abad@plus.ac.at
+    affiliation: University of Salzburg
+    orcid: 'https://orcid.org/0000-0003-0554-734X'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.11612296
+    description: Zenodo
+repository-code: 'https://github.com/loreabad6/vdc-space-time-feats'
+url: 'https://loreabad6.github.io/vdc-space-time-feats/'
+abstract: >-
+  Reproducibility repo for the short paper "Vector data
+  cubes for features evolving in space and time" presented
+  at AGILE 2024.
+keywords:
+  - vector data cube
+  - spatio-temporal anaysis
+  - R
+license: GPL-3.0

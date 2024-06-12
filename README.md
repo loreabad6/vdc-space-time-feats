@@ -16,7 +16,7 @@ This file has been rendered to a Quarto output ([manuscript-figures.html](https:
 
 ### [VDC showcase notebook](https://loreabad6.github.io/vdc-space-time-feats/notebook/vdc-showcase.html)
 
-The directory [`/notebook`](/notebook) contains a computational notebook written in Quarto [vdc-showcase.qmd](notebook/vdc-showcase.qmd) that documents the creation of vector data cubes (VDC) for features that evolve in space and time, namely, lava flows and landslides, as presented in the manuscript. The notebook contains further examples of the usage of VDCs, beyond the ones included in the manuscript. See [vdc-showcase.html](https://loreabad6.github.io/vdc-space-time-feats/notebook/vdc-showcase.html) or  [vdc-showcase.md](notebook/vdc-showcase.md)for a rendered version.
+The directory [`/notebook`](/notebook) contains a computational notebook written in Quarto [vdc-showcase.qmd](notebook/vdc-showcase.qmd) that documents the creation of vector data cubes (VDC) for features that evolve in space and time, namely, lava flows and landslides, as presented in the manuscript. The notebook contains further examples of the usage of VDCs, beyond the ones included in the manuscript. See [vdc-showcase.html](https://loreabad6.github.io/vdc-space-time-feats/notebook/vdc-showcase.html) or  [vdc-showcase.md](notebook/vdc-showcase.md) for a rendered version.
 
 At the end of both files, the output of `sessioninfo::sessioninfo()` is included to document set-up information such as software and packages used.
 
