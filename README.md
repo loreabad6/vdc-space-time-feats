@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/754718683.svg)](https://zenodo.org/doi/10.5281/zenodo.11612296)
+
 # Code and data for "Vector data cubes for features evolving in space and time"
 
 ## Short paper at AGILE 2024:
