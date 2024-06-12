@@ -300,7 +300,7 @@ download_zenodo(
     [zen4R][INFO] ZenodoRecord - Download in sequential mode 
     [zen4R][INFO] ZenodoRecord - Will download 1 file from record '7866738' (doi: '10.5281/zenodo.7866738') - total size: 2.3 MiB 
     [zen4R][INFO] Downloading file 'outlines_pedersen_etal2022_v12.zip' - size: 2.3 MiB
-    [zen4R][INFO] File downloaded at 'C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX'.
+    [zen4R][INFO] File downloaded at 'C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci'.
     [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
     [zen4R][INFO] File 'outlines_pedersen_etal2022_v12.zip': integrity verified (md5sum: fc7a74d235274b9707bc5acb296b45ea)
     [zen4R][INFO] ZenodoRecord - End of download 
@@ -333,36 +333,36 @@ lapply(files, unzip, exdir = here(dir, "unzipped"))
     NULL
 
     [[6]]
-     [1] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
-     [2] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
-     [3] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [4] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
-     [5] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
-     [6] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
-     [7] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
-     [8] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [9] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
-    [10] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
-    [11] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
-    [12] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
-    [13] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
-    [14] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
-    [15] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
-    [16] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [17] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
-    [18] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [19] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
-    [20] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
-    [21] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
-    [22] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
-    [23] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
-    [24] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [25] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [26] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
-    [27] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
-    [28] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
-    [29] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [30] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
+     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
+     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
+     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
+     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
+     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
+     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
+     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
+    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
+    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
+    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
+    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
+    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
+    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
+    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
+    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
+    [22] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
+    [23] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
+    [24] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [25] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [26] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
+    [27] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
+    [28] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
+    [29] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [30] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
 
 ``` r
 # Find geopackage files
@@ -736,7 +736,7 @@ download_zenodo(
     [zen4R][INFO] ZenodoRecord - Will download 2 files from record '10635102' (doi: '10.5281/zenodo.10635102') - total size: 144 KiB 
     [zen4R][INFO] Downloading file 'outlines.zip' - size: 142.7 KiB
     [zen4R][INFO] Downloading file 'Butangbunasi_OBIA_statistics.csv' - size: 1.2 KiB
-    [zen4R][INFO] Files downloaded at 'C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX'.
+    [zen4R][INFO] Files downloaded at 'C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci'.
     [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
     [zen4R][INFO] File 'outlines.zip': integrity verified (md5sum: d0034de915b5cae20d9be02899550e9a)
     [zen4R][INFO] File 'Butangbunasi_OBIA_statistics.csv': integrity verified (md5sum: 8ebe12e999df3e41f862db5dc31a57e7)
@@ -807,59 +807,59 @@ lapply(files, unzip, exdir = here(dir, "unzipped"))
     NULL
 
     [[15]]
-     [1] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_1984.gpkg"      
-     [2] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_1989.gpkg"      
-     [3] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_1990.gpkg"      
-     [4] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_1992.gpkg"      
-     [5] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_1994.gpkg"      
-     [6] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_1996.gpkg"      
-     [7] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_1998.gpkg"      
-     [8] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2000.gpkg"      
-     [9] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2001.gpkg"      
-    [10] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2004.gpkg"      
-    [11] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2005.gpkg"      
-    [12] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2005_10_03.gpkg"
-    [13] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2008.gpkg"      
-    [14] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2008_03_17.gpkg"
-    [15] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2009.gpkg"      
-    [16] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2010.gpkg"      
-    [17] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2013.gpkg"      
-    [18] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2015.gpkg"      
-    [19] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2016.gpkg"      
-    [20] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2018.gpkg"      
-    [21] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines/Butangbunasi_2021.gpkg"      
+     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1984.gpkg"      
+     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1989.gpkg"      
+     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1990.gpkg"      
+     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1992.gpkg"      
+     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1994.gpkg"      
+     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1996.gpkg"      
+     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1998.gpkg"      
+     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2000.gpkg"      
+     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2001.gpkg"      
+    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2004.gpkg"      
+    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2005.gpkg"      
+    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2005_10_03.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2008.gpkg"      
+    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2008_03_17.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2009.gpkg"      
+    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2010.gpkg"      
+    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2013.gpkg"      
+    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2015.gpkg"      
+    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2016.gpkg"      
+    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2018.gpkg"      
+    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2021.gpkg"      
 
     [[16]]
-     [1] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
-     [2] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
-     [3] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [4] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
-     [5] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
-     [6] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
-     [7] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
-     [8] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [9] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
-    [10] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
-    [11] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
-    [12] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
-    [13] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
-    [14] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
-    [15] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
-    [16] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [17] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
-    [18] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [19] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
-    [20] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
-    [21] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
-    [22] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
-    [23] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
-    [24] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [25] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [26] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
-    [27] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
-    [28] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
-    [29] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [30] "C:/Users/b1066081/AppData/Local/Temp/Rtmpc5VNfX/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
+     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
+     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
+     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
+     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
+     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
+     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
+     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
+     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
+    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
+    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
+    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
+    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
+    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
+    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
+    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
+    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
+    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
+    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
+    [22] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
+    [23] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
+    [24] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [25] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
+    [26] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
+    [27] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
+    [28] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
+    [29] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
+    [30] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
 
     [[17]]
     NULL
@@ -2025,7 +2025,7 @@ sessioninfo::session_info()
      collate  English_Austria.utf8
      ctype    English_Austria.utf8
      tz       Europe/Vienna
-     date     2024-05-16
+     date     2024-06-12
      pandoc   3.1.11 @ C:/Program Files/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
 
     ─ Packages ───────────────────────────────────────────────────────────────────
@@ -2109,7 +2109,7 @@ sessioninfo::session_info()
      sf             * 1.0-17      2024-05-16 [1] Github (loreabad6/sf@8cef41b)
      sp               2.1-4       2024-04-30 [1] CRAN (R 4.4.0)
      spacesXYZ        1.3-0       2024-01-23 [1] CRAN (R 4.4.0)
-     stars          * 0.6-6       2024-05-16 [1] Github (loreabad6/stars@8636c20)
+     stars          * 0.6-6       2024-05-16 [1] Github (loreabad6/stars@c32babe)
      stringi          1.8.4       2024-05-06 [1] CRAN (R 4.4.0)
      stringr        * 1.5.1       2023-11-14 [1] CRAN (R 4.3.2)
      terra            1.7-71      2024-01-31 [1] CRAN (R 4.3.2)

@@ -7,6 +7,11 @@ format:
     toc-depth: 3
     number-sections: true
     fig-dpi: 300
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    fig-dpi: 300
 ---
 
 # Context
