@@ -42,7 +42,7 @@ pkgs = c(
 install.packages(pkgs)
 remotes::install_github("huizezhang-sherry/cubble")
 remotes::install_github("eliocamp/ggnewscale")
-remotes::install_github("r-spatial/sf")
+remotes::install_github("loreabad6/sf")
 remotes::install_github("r-spatial/stars")
 install.packages(
   'tmap',
@@ -71,7 +71,7 @@ library(tidyr) # create tidy data
 library(tmap) # spatial visualisation
 library(tsibble) # handle time series data
 library(units) # set units
-library(zen4R) # download data from zenodo
+# library(zen4R) # download data from zenodo
 ```
 
 # Data and pre-processing
@@ -87,7 +87,8 @@ The lava flow outlines for the Fagradalsfjall eruption can be obtained from @ped
 This is the description attached to the repository.
 
 ```{r}
-#| results = "asis"
+#| eval: false
+#| results: "asis"
 zenodo = get_zenodo(
   doi = "10.5281/zenodo.7866738"
 )
@@ -100,6 +101,7 @@ As we see, the vector data format is GeoPackage.
 These are the files contained in the repository:
 
 ```{r}
+#| eval: false 
 zenodo$files
 ```
 
@@ -111,7 +113,7 @@ Hence, we will download only the outlines zipped file, unzip and create a list o
 
 ```{r}
 #| label: downloadlf
-#| eval: true
+#| eval: false
 dir = tempdir()
 download_zenodo(
   doi = "10.5281/zenodo.7866738",
@@ -138,7 +140,7 @@ fn_gpkg = list.files(
 
 ```{r}
 #| label: temporarychunklfdata
-#| eval: false
+#| eval: true
 #| echo: false
 data_dir = here("data", "raw", "lava_flows",
                 "fagradalsfjall")
@@ -219,7 +221,8 @@ The Butangbunasi landslide outlines can be obtained from @Hoelbling_2024_Butangb
 This is the description attached to the repository.
 
 ```{r}
-#| results = "asis"
+#| eval: false
+#| results: "asis"
 zenodo = get_zenodo(
   doi = "10.5281/zenodo.10635102"
 )
@@ -232,6 +235,7 @@ Again, the vector data format is GeoPackage.
 These are the files contained in the repository:
 
 ```{r}
+#| eval: false
 zenodo$files
 ```
 
@@ -241,7 +245,7 @@ From exploring the repository and checking the description, we concluded the "Bu
 
 ```{r}
 #| label: downloadldsl
-#| eval: true
+#| eval: false
 # Fetch also the CSV file with additional info
 dir = tempdir()
 download_zenodo(
@@ -269,7 +273,7 @@ mapping_ls = list.files(
 
 ```{r}
 #| label: temporarychunkldsldata
-#| eval: false
+#| eval: true
 #| echo: false
 dir = here("data", "raw", "landslides",
                 "butangbunasi")
@@ -652,9 +656,12 @@ cube_tab_lf |>
 ### CRS transformation
 
 Transforming the CRS of the VDC works for both the tabular and array formats.
-However, the changing geometries preserve their original CRS, even though the *summary_geometry* is modified for both formats.
 
-In future work, we aim for a better integration of the *summary geometry* and *shape-evolving geometries*, where both geometry-columns get updated with such operations.
+For the tabular format, the changing geometries preserve their original CRS, even though the *summary_geometry* is modified for both formats.
+
+For the array format, this issue is fixed thanks to [@edzer](https://github.com/edzer), see [#1](https://github.com/loreabad6/vdc-space-time-feats/issues/1).
+
+In future implementations, the tabular format will have a better integration of the *summary geometry* and *shape-evolving geometries*, where both geometry-columns get updated with such operations.
 
 ```{r}
 test_arr = cube_arr_lf |> 
@@ -665,7 +672,8 @@ test_arr$geometry
 test_tab = cube_tab_lf |>  
   st_transform(4326)
 test_tab
-test_tab |> face_temporal()
+test_tab |> 
+  face_temporal() 
 ```
 
 ### Differences in time series

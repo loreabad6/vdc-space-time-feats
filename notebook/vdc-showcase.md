@@ -102,7 +102,7 @@ pkgs = c(
 install.packages(pkgs)
 remotes::install_github("huizezhang-sherry/cubble")
 remotes::install_github("eliocamp/ggnewscale")
-remotes::install_github("r-spatial/sf")
+remotes::install_github("loreabad6/sf")
 remotes::install_github("r-spatial/stars")
 install.packages(
   'tmap',
@@ -129,7 +129,7 @@ library(tidyr) # create tidy data
 library(tmap) # spatial visualisation
 library(tsibble) # handle time series data
 library(units) # set units
-library(zen4R) # download data from zenodo
+# library(zen4R) # download data from zenodo
 ```
 
 # Data and pre-processing
@@ -153,79 +153,6 @@ zenodo = get_zenodo(
 zenodo$metadata$description
 ```
 
-\[1\] “
-<p>
-This repository contains the data behind the work described in Pedersen
-et al (in review), specifically the Digital Elevation Models (DEMs),
-orthoimages and lava outlines created as part of the near-real time
-monitoring of the Fagradalsfjall 2021 eruption (SW-Iceland).
-</p>
-<p>
-The processing of the data is explained in detail in the Supplement S2
-of Pedersen et al (2022).
-</p>
-<p>
-The data derived from Pléiades surveys includes only the DEMs and the
-lava outlines. The Pléiades-based orthoimages are subject to license.
-Please contact the authors for further information about this.
-</p>
-<p>
-<strong>Convention for file naming:</strong>
-</p>
-<p>
-Data: DEM, Ortho, Outline
-</p>
-<p>
-YYYYMMDD_HHMM: Date of acquisition
-</p>
-<p>
-Platform used: Helicopter (HEL), Pléiades (PLE), Hasselblad A6D (A6D)
-</p>
-<p>
-Origin of elevations in DEMs: meters above ellipsoid (zmae)
-</p>
-<p>
-Ground Sampling Distance: 2x2m (DEM) and 30x30cm (Ortho)
-</p>
-<p>
-Cartographic projection: isn93 (see cartographic specifications for
-further details)
-</p>
-<p>
- 
-</p>
-<p>
-<strong>Cartographic specifications:</strong>
-</p>
-<p>
-Cartographic projection: ISN93/Lambert 1993 (EPSG: 3057,
-https://epsg.io/3057)
-</p>
-<p>
-Horizontal and vertical reference frame: The surveys after 18 April 2021
-are in ISN2016/ISH2004, updated locally around the study area in April
-2021 (after pre-eruptive deformations occurred). The rest of the surveys
-of late March and early April were created using several floating
-reference systems (see Supplement S3 for details), since no ground
-surveys were available during the first weeks of the data collection.
-The surveys of 23 March 2021, 31 March 2021 were re-procesed in Gouhier
-et al., 2022, using the survey done on 18 May 2021 as reference.
-</p>
-<p>
-Origin of elevations: Ellipsoid WGS84
-</p>
-<p>
-Raster data format: GeoTIFF
-</p>
-<p>
-Raster compression system: ZSTD (http://facebook.github.io/zstd/)
-</p>
-<p>
-Vector data format: GeoPackage (https://www.geopackage.org/)
-</p>
-
-”
-
 ### Files
 
 As we see, the vector data format is GeoPackage. These are the files
@@ -234,47 +161,6 @@ contained in the repository:
 ``` r
 zenodo$files
 ```
-
-    [[1]]
-    [[1]]$filename
-    [1] "orthoimages_pedersen_etal2022.zip"
-
-    [[1]]$filesize
-    [1] 6135463409
-
-    [[1]]$checksum
-    [1] "56b87142a69ac115d2fe4df961edbcad"
-
-    [[1]]$download
-    [1] "https://zenodo.org/api/records/7866738/files/orthoimages_pedersen_etal2022.zip/content"
-
-
-    [[2]]
-    [[2]]$filename
-    [1] "dems_pedersen_etal2022.zip"
-
-    [[2]]$filesize
-    [1] 378215030
-
-    [[2]]$checksum
-    [1] "82d51d5cedd1353958e24a13b097de50"
-
-    [[2]]$download
-    [1] "https://zenodo.org/api/records/7866738/files/dems_pedersen_etal2022.zip/content"
-
-
-    [[3]]
-    [[3]]$filename
-    [1] "outlines_pedersen_etal2022_v12.zip"
-
-    [[3]]$filesize
-    [1] 2447251
-
-    [[3]]$checksum
-    [1] "fc7a74d235274b9707bc5acb296b45ea"
-
-    [[3]]$download
-    [1] "https://zenodo.org/api/records/7866738/files/outlines_pedersen_etal2022_v12.zip/content"
 
 From an inspection on the Zenodo listing we could see that the outline
 for each date is saved as a different file.
@@ -295,76 +181,11 @@ download_zenodo(
   overwrite = FALSE,
   timeout = 600
 )
-```
 
-    [zen4R][INFO] ZenodoRecord - Download in sequential mode 
-    [zen4R][INFO] ZenodoRecord - Will download 1 file from record '7866738' (doi: '10.5281/zenodo.7866738') - total size: 2.3 MiB 
-    [zen4R][INFO] Downloading file 'outlines_pedersen_etal2022_v12.zip' - size: 2.3 MiB
-    [zen4R][INFO] File downloaded at 'C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci'.
-    [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
-    [zen4R][INFO] File 'outlines_pedersen_etal2022_v12.zip': integrity verified (md5sum: fc7a74d235274b9707bc5acb296b45ea)
-    [zen4R][INFO] ZenodoRecord - End of download 
-
-``` r
 # Unzip
 files = list.files(here(dir), full.names = TRUE)
 lapply(files, unzip, exdir = here(dir, "unzipped"))
-```
 
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-
-    [[1]]
-    NULL
-
-    [[2]]
-    NULL
-
-    [[3]]
-    NULL
-
-    [[4]]
-    NULL
-
-    [[5]]
-    NULL
-
-    [[6]]
-     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
-     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
-     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
-     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
-     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
-     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
-     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
-    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
-    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
-    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
-    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
-    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
-    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
-    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
-    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
-    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
-    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
-    [22] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
-    [23] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
-    [24] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [25] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [26] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
-    [27] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
-    [28] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
-    [29] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [30] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
-
-``` r
 # Find geopackage files
 fn_gpkg = list.files(
   here(dir, "unzipped"),
@@ -470,197 +291,6 @@ zenodo = get_zenodo(
 zenodo$metadata$description
 ```
 
-\[1\] “
-<p>
-This repository contains an updated version of the data created and
-described by
-<a title=\"Paper\" href=\"https://doi.org/10.3390/app10020630\" target=\"_blank\" rel=\"noopener\">Hölbling
-et al. (2020)</a>, specifically the landslide and landslide-dammed lake
-outlines mapped using an object-based image analysis (OBIA) workflow,
-summary statistics and further information regarding the landslide and
-lake mapping, and a table with the typhoons and tropical storms selected
-for the study of the evolution of the Butangbunasi landslide in Taiwan
-from 1984 to 2018.<br>The update consists of the addition of a landslide
-and lake outline for the year 2021 following the tropical storm Lupit.
-</p>
-<p>
-Further information on the methodology and data used are explained in
-Hölbling et al. (2020).
-</p>
-Landslide and landslide-dammed lake outlines
-</h3>
-<p>
-<em>Convention for file naming:</em>
-</p>
-<p>
-Butangbunasi_YYYY or Butangbunasi_YYYY_MM_DD when several mappings per
-year were carried out.<br>YYYY corresponds to the year of the Landsat
-satellite imagery.
-</p>
-<p>
-<em>Cartographic specifications:</em>
-</p>
-<p>
-Cartographic projection: WGS 84 / UTM zone 51N (\<a title="EPSG site"
-href="https://epsg.io/32651" target="\_blank" rel="noopener"\>EPSG:
-32651</a>)
-</p>
-<p>
-Vector data format:
-<a title=\"GeoPackage\" href=\"https://www.geopackage.org\" target=\"_blank\" rel=\"noopener\">GeoPackage</a>
-</p>
-OBIA statistics (Butangbunasi_OBIA_statistics.csv)
-</h3>
-<p>
-<em>Column descriptions:</em>
-</p>
-<table>
-<tbody>
-<tr>
-<td>
-satellite_sensor
-</td>
-<td>
-Satellite from which the outlines were generated
-</td>
-</tr>
-<tr>
-<td>
-date
-</td>
-<td>
-Acquisition date of the satellite imagery
-</td>
-</tr>
-<tr>
-<td>
-landslide_area_ha
-</td>
-<td>
-Total area in hectares of the landslide 
-</td>
-</tr>
-<tr>
-<td>
-lake_area_ha
-</td>
-<td>
-Total area in hectares of the landslide-dammed lake
-</td>
-</tr>
-<tr>
-<td>
-file
-</td>
-<td>
-File name corresponding to the landslide and lake mapping summary
-</td>
-</tr>
-</tbody>
-</table>
-Typhoons (Butangbunasi_typhoons.csv)
-</h3>
-<p>
-Table derived from the
-<a title=\"IBTrACS\" href=\"https://www.ncei.noaa.gov/products/international-best-track-archive\" target=\"_blank\" rel=\"noopener\">International
-Best Track Archive for Climate Stewardship (IBTrACS)</a> v.4
-dataset. <br>Includes the location per storm closest to the Butangbunasi
-landslide study area.<br>These typhoons were identified as the ones
-causing a significant change in landslide area, based on visual
-inspection of pre- and post-event satellite imagery.<br>Typhoon dates
-were used as a marker to find and select satellite imagery for
-subsequent mapping.
-</p>
-<p>
-<em>Column descriptions:</em>
-</p>
-<table>
-<tbody>
-<tr>
-<td>
-SID
-</td>
-<td>
-Storm Identifier
-</td>
-</tr>
-<tr>
-<td>
-NAME
-</td>
-<td>
-Name provided by the agency. IBTrACS ignores most names that include
-digits or abbreviations
-</td>
-</tr>
-<tr>
-<td>
-SEASON
-</td>
-<td>
-Year
-</td>
-</tr>
-<tr>
-<td>
-USA_SSHS
-</td>
-<td>
-Saffir-Simpson Hurricane Scale information based on the wind speed
-provided by the US agency wind speed (US agencies provide 1-minute wind
-speeds)<br>    -5 = Unknown \[XX\]<br>    -4 = Post-tropical \[EX, ET,
-PT\]<br>    -3 = Miscellaneous disturbances \[WV, LO, DB, DS, IN,
-MD\]<br>    -2 = Subtropical \[SS, SD\]<br>    Tropical systems
-classified based on wind speeds \[TD, TS, HU, TY,, TC, ST, HR\]<br>   
- -1 = Tropical depression (W\<34)<br>     0 = Tropical storm
-\[34\<W\<64\]<br>     1 = Category 1 \[64\<=W\<83\]<br>     2 = Category
-2 \[83\<=W\<96\]<br>     3 = Category 3 \[96\<=W\<113\]<br>     4 =
-Category 4 \[113\<=W\<137\]<br>     5 = Category 5 \[W \>= 137\]
-</td>
-</tr>
-<tr>
-<td>
-ISO_TIME
-</td>
-<td>
-ISO Time provided in Universal Time Coordinates (UTC). Format is
-YYYY-MM-DD HH:mm:ss
-</td>
-</tr>
-<tr>
-<td>
-DIST2LAND
-</td>
-<td>
-Distance (km) to land from the current position. The land dataset
-includes all continents and any islands larger than 1400 km^2. The
-distance is the nearest at the present time in any direction
-</td>
-</tr>
-<tr>
-<td>
-maxSSHS
-</td>
-<td>
-The maximum SSHS category recorded during the storm trajectory
-</td>
-</tr>
-<tr>
-<td>
-dist2aoi_km
-</td>
-<td>
-Distance (km) to the Butangbunasi landslide site
-</td>
-</tr>
-</tbody>
-</table>
-<p>
- 
-</p>
-
-”
-
 ### Files
 
 Again, the vector data format is GeoPackage. These are the files
@@ -669,47 +299,6 @@ contained in the repository:
 ``` r
 zenodo$files
 ```
-
-    [[1]]
-    [[1]]$filename
-    [1] "Butangbunasi_typhoons.csv"
-
-    [[1]]$filesize
-    [1] 1491
-
-    [[1]]$checksum
-    [1] "c6f80649e8e0dfaf1bb5834d38a4c262"
-
-    [[1]]$download
-    [1] "https://zenodo.org/api/records/10635102/files/Butangbunasi_typhoons.csv/content"
-
-
-    [[2]]
-    [[2]]$filename
-    [1] "outlines.zip"
-
-    [[2]]$filesize
-    [1] 146165
-
-    [[2]]$checksum
-    [1] "d0034de915b5cae20d9be02899550e9a"
-
-    [[2]]$download
-    [1] "https://zenodo.org/api/records/10635102/files/outlines.zip/content"
-
-
-    [[3]]
-    [[3]]$filename
-    [1] "Butangbunasi_OBIA_statistics.csv"
-
-    [[3]]$filesize
-    [1] 1276
-
-    [[3]]$checksum
-    [1] "8ebe12e999df3e41f862db5dc31a57e7"
-
-    [[3]]$download
-    [1] "https://zenodo.org/api/records/10635102/files/Butangbunasi_OBIA_statistics.csv/content"
 
 ### Download and read
 
@@ -730,141 +319,11 @@ download_zenodo(
   overwrite = FALSE,
   timeout = 100
 )
-```
 
-    [zen4R][INFO] ZenodoRecord - Download in sequential mode 
-    [zen4R][INFO] ZenodoRecord - Will download 2 files from record '10635102' (doi: '10.5281/zenodo.10635102') - total size: 144 KiB 
-    [zen4R][INFO] Downloading file 'outlines.zip' - size: 142.7 KiB
-    [zen4R][INFO] Downloading file 'Butangbunasi_OBIA_statistics.csv' - size: 1.2 KiB
-    [zen4R][INFO] Files downloaded at 'C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci'.
-    [zen4R][INFO] ZenodoRecord - Verifying file integrity... 
-    [zen4R][INFO] File 'outlines.zip': integrity verified (md5sum: d0034de915b5cae20d9be02899550e9a)
-    [zen4R][INFO] File 'Butangbunasi_OBIA_statistics.csv': integrity verified (md5sum: 8ebe12e999df3e41f862db5dc31a57e7)
-    [zen4R][INFO] ZenodoRecord - End of download 
-
-``` r
 # Unzip
 files = list.files(here(dir), full.names = TRUE)
 lapply(files, unzip, exdir = here(dir, "unzipped"))
-```
 
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-    Warning in FUN(X[[i]], ...): error 1 in extracting from zip file
-
-    [[1]]
-    NULL
-
-    [[2]]
-    NULL
-
-    [[3]]
-    NULL
-
-    [[4]]
-    NULL
-
-    [[5]]
-    NULL
-
-    [[6]]
-    NULL
-
-    [[7]]
-    NULL
-
-    [[8]]
-    NULL
-
-    [[9]]
-    NULL
-
-    [[10]]
-    NULL
-
-    [[11]]
-    NULL
-
-    [[12]]
-    NULL
-
-    [[13]]
-    NULL
-
-    [[14]]
-    NULL
-
-    [[15]]
-     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1984.gpkg"      
-     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1989.gpkg"      
-     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1990.gpkg"      
-     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1992.gpkg"      
-     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1994.gpkg"      
-     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1996.gpkg"      
-     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_1998.gpkg"      
-     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2000.gpkg"      
-     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2001.gpkg"      
-    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2004.gpkg"      
-    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2005.gpkg"      
-    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2005_10_03.gpkg"
-    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2008.gpkg"      
-    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2008_03_17.gpkg"
-    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2009.gpkg"      
-    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2010.gpkg"      
-    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2013.gpkg"      
-    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2015.gpkg"      
-    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2016.gpkg"      
-    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2018.gpkg"      
-    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines/Butangbunasi_2021.gpkg"      
-
-    [[16]]
-     [1] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_1240_A6D_Pedersen_etal2022_v12.gpkg"
-     [2] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210321_1130_HEL_Pedersen_etal2022_v12.gpkg"
-     [3] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210331_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [4] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1010_A6D_Pedersen_etal2022_v12.gpkg"
-     [5] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210405_1416_A6D_Pedersen_etal2022_v12.gpkg"
-     [6] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210406_1338_A6D_Pedersen_etal2022_v12.gpkg"
-     [7] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210408_1325_A6D_Pedersen_etal2022_v12.gpkg"
-     [8] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210412_1210_A6D_Pedersen_etal2022_v12.gpkg"
-     [9] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210320_0745_HEL_Pedersen_etal2022_v12.gpkg"
-    [10] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210322_1322_PLE_Pedersen_etal2022_v12.gpkg"
-    [11] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210323_1005_A6D_Pedersen_etal2022_v12.gpkg"
-    [12] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210326_1252_PLE_Pedersen_etal2022_v12.gpkg"
-    [13] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210329_1319_PLE_Pedersen_etal2022_v12.gpkg"
-    [14] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210330_1311_PLE_Pedersen_etal2022_v12.gpkg"
-    [15] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210418_1230_A6D_Pedersen_etal2022_v12.gpkg"
-    [16] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210421_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [17] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210426_1515_A6D_Pedersen_etal2022_v12.gpkg"
-    [18] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210428_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [19] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210503_1545_A6D_Pedersen_etal2022_v12.gpkg"
-    [20] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210510_1242_A6D_Pedersen_etal2022_v12.gpkg"
-    [21] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210518_1730_A6D_Pedersen_etal2022_v12.gpkg"
-    [22] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210602_1522_A6D_Pedersen_etal2022_v12.gpkg"
-    [23] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210611_1250_A6D_Pedersen_etal2022_v12.gpkg"
-    [24] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210626_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [25] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210702_1249_PLE_Pedersen_etal2022_v12.gpkg"
-    [26] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210727_1000_A6D_Pedersen_etal2022_v12.gpkg"
-    [27] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210808_1717_A6D_Pedersen_etal2022_v12.gpkg"
-    [28] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210909_1600_A6D_Pedersen_etal2022_v12.gpkg"
-    [29] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210917_1330_A6D_Pedersen_etal2022_v12.gpkg"
-    [30] "C:/Users/b1066081/AppData/Local/Temp/RtmpqANLci/unzipped/outlines_pedersen_etal2022_v12/Outline_20210930_1420_A6D_Pedersen_etal2022_v12.gpkg"
-
-    [[17]]
-    NULL
-
-``` r
 # Find geopackage files
 mapping_ls = list.files(
   here(dir, "unzipped", "outlines"), 
@@ -1338,7 +797,7 @@ cube_tab_ldsl |>
      5 lake  1994-09-03 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
      6 lake  1996-08-23 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
      7 lake  1998-11-01 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
-     8 lake  2000-09-27 Landsat 7  6.88 MULTIPOLYGON (((273925 2566783, 273862.5 25…
+     8 lake  2000-09-27 Landsat 7  6.88 MULTIPOLYGON (((273925 2566782, 273862.5 25…
      9 lake  2001-09-14 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
     10 lake  2004-07-12 <NA>      NA                        GEOMETRYCOLLECTION EMPTY
     # ℹ 30 more rows
@@ -1546,12 +1005,18 @@ cube_tab_lf |>
 ### CRS transformation
 
 Transforming the CRS of the VDC works for both the tabular and array
-formats. However, the changing geometries preserve their original CRS,
-even though the *summary_geometry* is modified for both formats.
+formats.
 
-In future work, we aim for a better integration of the *summary
-geometry* and *shape-evolving geometries*, where both geometry-columns
-get updated with such operations.
+For the tabular format, the changing geometries preserve their original
+CRS, even though the *summary_geometry* is modified for both formats.
+
+For the array format, this issue is fixed thanks to
+[(**edzer?**)](https://github.com/edzer), see
+[\#1](https://github.com/loreabad6/vdc-space-time-feats/issues/1).
+
+In future implementations, the tabular format will have a better
+integration of the *summary geometry* and *shape-evolving geometries*,
+where both geometry-columns get updated with such operations.
 
 ``` r
 test_arr = cube_arr_lf |> 
@@ -1564,8 +1029,8 @@ test_arr
              geometry  
      MULTIPOLYGON : 2  
      POLYGON      :28  
-     epsg:3057    : 0  
-     +proj=lcc ...: 0  
+     epsg:4326    : 0  
+     +proj=long...: 0  
     dimension(s):
              from to  refsys point                                      values
     geom_sum    1  1  WGS 84  TRUE                        POINT (-22.26 63.89)
@@ -1575,22 +1040,22 @@ test_arr
 test_arr$geometry
 ```
 
-    Geometry set for 30 features 
+    Geometry set for 30 features  [dim: 1 x 30]
     Geometry type: GEOMETRY
     Dimension:     XY
-    Bounding box:  xmin: 338076.7 ymin: 377493.5 xmax: 342156.5 ymax: 381359.6
-    Projected CRS: ISN93 / Lambert 1993
+    Bounding box:  xmin: -22.29422 ymin: 63.86326 xmax: -22.2152 ymax: 63.89919
+    Geodetic CRS:  WGS 84
     First 5 geometries:
 
-    POLYGON ((339233.7 380352.7, 339227.5 380350.7,...
+    POLYGON ((-22.27373 63.8894, -22.27385 63.88938...
 
-    POLYGON ((339159.3 380472.3, 339159.3 380472.3,...
+    POLYGON ((-22.27537 63.89044, -22.27537 63.8904...
 
-    POLYGON ((339355.4 380527.9, 339368.6 380521.4,...
+    POLYGON ((-22.27144 63.89103, -22.27116 63.8909...
 
-    POLYGON ((339207.9 380067.1, 339203.2 380057.7,...
+    POLYGON ((-22.27395 63.88683, -22.27403 63.8867...
 
-    POLYGON ((339066.8 380389.2, 339066.1 380390.5,...
+    POLYGON ((-22.27716 63.88965, -22.27717 63.8896...
 
 ``` r
 test_tab = cube_tab_lf |>  
@@ -1613,7 +1078,8 @@ test_tab
     1     1 339860. 380008. (-22.26064 63.88661) <tibble [30 × 2]>
 
 ``` r
-test_tab |> face_temporal()
+test_tab |> 
+  face_temporal() 
 ```
 
     # cubble:   key: id [1], index: datetime, long form
@@ -1687,9 +1153,9 @@ cube_tab_ldsl |>
      5 landslide 1994-09-03 Landsat 5  94.1 (((273500 2566820, 273462.5 2566… -27.4 
      6 landslide 1996-08-23 Landsat 5 118.  (((273462.5 2566820, 273462.5 25…  23.7 
      7 landslide 1998-11-01 Landsat 5  96.3 (((273775 2566820, 273712.5 2566… -21.5 
-     8 landslide 2000-09-27 Landsat 7 120.  (((273500 2566783, 273500 256682…  23.4 
+     8 landslide 2000-09-27 Landsat 7 120.  (((273500 2566782, 273500 256682…  23.4 
      9 landslide 2001-09-14 Landsat 7 121.  (((273825 2566820, 273825 256678…   1.22
-    10 landslide 2004-07-12 Landsat 5 123.  (((273825 2566933, 273862.5 2566…   2.31
+    10 landslide 2004-07-12 Landsat 5 123.  (((273825 2566932, 273862.5 2566…   2.31
     # ℹ 30 more rows
 
 Functions like spatial filtering and data aggregations would become more
@@ -2017,125 +1483,113 @@ sessioninfo::session_info()
 
     ─ Session info ───────────────────────────────────────────────────────────────
      setting  value
-     version  R version 4.4.0 (2024-04-24 ucrt)
-     os       Windows 10 x64 (build 19045)
-     system   x86_64, mingw32
-     ui       RTerm
-     language ENG
-     collate  English_Austria.utf8
-     ctype    English_Austria.utf8
-     tz       Europe/Vienna
-     date     2024-06-12
-     pandoc   3.1.11 @ C:/Program Files/RStudio/resources/app/bin/quarto/bin/tools/ (via rmarkdown)
+     version  R version 4.4.1 (2024-06-14)
+     os       Ubuntu 22.04.4 LTS
+     system   x86_64, linux-gnu
+     ui       X11
+     language (EN)
+     collate  en_US.UTF-8
+     ctype    en_US.UTF-8
+     tz       Etc/UTC
+     date     2024-07-11
+     pandoc   3.2 @ /usr/bin/ (via rmarkdown)
 
     ─ Packages ───────────────────────────────────────────────────────────────────
-     package        * version     date (UTC) lib source
-     abind          * 1.4-5       2016-07-21 [1] CRAN (R 4.2.0)
-     anytime          0.3.9       2020-08-27 [1] CRAN (R 4.2.3)
-     assertthat       0.2.1       2019-03-21 [1] CRAN (R 4.2.3)
-     atom4R           0.3-3       2022-11-18 [1] CRAN (R 4.3.2)
-     base64enc        0.1-3       2015-07-28 [1] CRAN (R 4.2.0)
-     bit              4.0.5       2022-11-15 [1] CRAN (R 4.2.3)
-     bit64            4.0.5       2020-08-30 [1] CRAN (R 4.2.3)
-     class            7.3-22      2023-05-03 [1] CRAN (R 4.3.1)
-     classInt         0.4-10      2023-09-05 [1] CRAN (R 4.3.1)
-     cli              3.6.2       2023-12-11 [1] CRAN (R 4.3.2)
-     codetools        0.2-20      2024-03-31 [2] CRAN (R 4.4.0)
-     colorspace       2.1-0       2023-01-23 [1] CRAN (R 4.2.3)
-     cols4all         0.7-1       2024-03-12 [1] CRAN (R 4.4.0)
-     crayon           1.5.2       2022-09-29 [1] CRAN (R 4.2.3)
-     crosstalk        1.2.1       2023-11-23 [1] CRAN (R 4.3.2)
-     cubble         * 0.3.0       2024-02-13 [1] Github (huizezhang-sherry/cubble@ffaf798)
-     cubelyr          1.0.2       2022-11-07 [1] CRAN (R 4.2.3)
-     curl             5.2.1       2024-03-01 [1] CRAN (R 4.4.0)
-     data.table       1.15.4      2024-03-30 [1] CRAN (R 4.4.0)
-     DBI              1.2.2       2024-02-16 [1] CRAN (R 4.3.3)
-     dichromat        2.0-0.1     2022-05-02 [1] CRAN (R 4.2.0)
-     digest           0.6.35      2024-03-11 [1] CRAN (R 4.4.0)
-     dplyr          * 1.1.4       2023-11-17 [1] CRAN (R 4.3.2)
-     e1071            1.7-14      2023-12-06 [1] CRAN (R 4.3.2)
-     ellipsis         0.3.2       2021-04-29 [1] CRAN (R 4.2.3)
-     evaluate         0.23        2023-11-01 [1] CRAN (R 4.3.2)
-     fansi            1.0.6       2023-12-08 [1] CRAN (R 4.3.2)
-     farver           2.1.1       2022-07-06 [1] CRAN (R 4.2.3)
-     fastmap          1.1.1       2023-02-24 [1] CRAN (R 4.2.3)
-     generics         0.1.3       2022-07-05 [1] CRAN (R 4.2.3)
-     ggnewscale     * 0.4.10      2024-02-08 [1] CRAN (R 4.3.2)
-     ggplot2        * 3.5.1       2024-04-23 [1] CRAN (R 4.4.0)
-     glue             1.7.0       2024-01-09 [1] CRAN (R 4.3.2)
-     gtable           0.3.5       2024-04-22 [1] CRAN (R 4.4.0)
-     here           * 1.0.1       2020-12-13 [1] CRAN (R 4.2.3)
-     hms              1.1.3       2023-03-21 [1] CRAN (R 4.3.1)
-     htmltools        0.5.8.1     2024-04-04 [1] CRAN (R 4.4.0)
-     htmlwidgets      1.6.4       2023-12-06 [1] CRAN (R 4.3.2)
-     httr             1.4.7       2023-08-15 [1] CRAN (R 4.3.1)
-     jsonlite         1.8.8       2023-12-04 [1] CRAN (R 4.3.2)
-     KernSmooth       2.23-22     2023-07-10 [1] CRAN (R 4.3.1)
-     keyring          1.3.2       2023-12-11 [1] CRAN (R 4.4.0)
-     knitr            1.46        2024-04-06 [1] CRAN (R 4.4.0)
-     labeling         0.4.3       2023-08-29 [1] CRAN (R 4.3.1)
-     lattice          0.22-6      2024-03-20 [1] CRAN (R 4.4.0)
-     leafem           0.2.3       2023-09-17 [1] CRAN (R 4.3.2)
-     leaflegend       1.2.0       2024-01-10 [1] CRAN (R 4.4.0)
-     leaflet          2.2.2       2024-03-26 [1] CRAN (R 4.4.0)
-     leafsync         0.1.0       2019-03-05 [1] CRAN (R 4.2.3)
-     lifecycle        1.0.4       2023-11-07 [1] CRAN (R 4.3.2)
-     lubridate        1.9.3       2023-09-27 [1] CRAN (R 4.3.2)
-     lwgeom           0.2-14      2024-02-21 [1] CRAN (R 4.3.3)
-     magrittr         2.0.3       2022-03-30 [1] CRAN (R 4.1.3)
-     microbenchmark   1.4.10      2023-04-28 [1] CRAN (R 4.3.1)
-     munsell          0.5.1       2024-04-01 [1] CRAN (R 4.4.0)
-     ncdf4            1.22        2023-11-28 [1] CRAN (R 4.3.2)
-     patchwork      * 1.2.0       2024-01-08 [1] CRAN (R 4.3.2)
-     pillar           1.9.0       2023-03-22 [1] CRAN (R 4.3.1)
-     pkgconfig        2.0.3       2019-09-22 [1] CRAN (R 4.2.3)
-     png              0.1-8       2022-11-29 [1] CRAN (R 4.2.2)
-     proxy            0.4-27      2022-06-09 [1] CRAN (R 4.2.3)
-     purrr          * 1.0.2       2023-08-10 [1] CRAN (R 4.3.1)
-     R6               2.5.1       2021-08-19 [1] CRAN (R 4.2.3)
-     raster           3.6-26      2023-10-14 [1] CRAN (R 4.3.2)
-     RColorBrewer     1.1-3       2022-04-03 [1] CRAN (R 4.2.0)
-     Rcpp             1.0.12      2024-01-09 [1] CRAN (R 4.4.0)
-     rdflib           0.2.8       2023-12-19 [1] CRAN (R 4.3.2)
-     readr          * 2.1.5       2024-01-10 [1] CRAN (R 4.4.0)
-     redland          1.0.17-18   2024-02-24 [1] CRAN (R 4.4.0)
-     rlang            1.1.3       2024-01-10 [1] CRAN (R 4.3.2)
-     rmarkdown        2.26        2024-03-05 [1] CRAN (R 4.3.1)
-     roxygen2         7.3.1       2024-01-22 [1] CRAN (R 4.3.3)
-     rprojroot        2.0.4       2023-11-05 [1] CRAN (R 4.4.0)
-     rstudioapi       0.16.0      2024-03-24 [1] CRAN (R 4.4.0)
-     scales           1.3.0       2023-11-28 [1] CRAN (R 4.3.2)
-     sessioninfo      1.2.2       2021-12-06 [1] CRAN (R 4.4.0)
-     sf             * 1.0-17      2024-05-16 [1] Github (loreabad6/sf@8cef41b)
-     sp               2.1-4       2024-04-30 [1] CRAN (R 4.4.0)
-     spacesXYZ        1.3-0       2024-01-23 [1] CRAN (R 4.4.0)
-     stars          * 0.6-6       2024-05-16 [1] Github (loreabad6/stars@c32babe)
-     stringi          1.8.4       2024-05-06 [1] CRAN (R 4.4.0)
-     stringr        * 1.5.1       2023-11-14 [1] CRAN (R 4.3.2)
-     terra            1.7-71      2024-01-31 [1] CRAN (R 4.3.2)
-     tibble           3.2.1       2023-03-20 [1] CRAN (R 4.3.1)
-     tidyr          * 1.3.1       2024-01-24 [1] CRAN (R 4.3.2)
-     tidyselect       1.2.1       2024-03-11 [1] CRAN (R 4.4.0)
-     timechange       0.3.0       2024-01-18 [1] CRAN (R 4.3.2)
-     tmap           * 4.0         2023-12-12 [1] Github (r-tmap/tmap@b303e4d)
-     tmaptools        3.1-1       2021-01-19 [1] CRAN (R 4.2.3)
-     tsibble        * 1.1.4       2024-01-29 [1] CRAN (R 4.3.2)
-     tzdb             0.4.0       2023-05-12 [1] CRAN (R 4.3.1)
-     units          * 0.8-5.3     2024-01-31 [1] local
-     utf8             1.2.4       2023-10-22 [1] CRAN (R 4.3.2)
-     vctrs            0.6.5       2023-12-01 [1] CRAN (R 4.3.2)
-     viridisLite      0.4.2       2023-05-02 [1] CRAN (R 4.3.1)
-     vroom            1.6.5       2023-12-05 [1] CRAN (R 4.4.0)
-     widgetframe      0.3.1       2017-12-20 [1] CRAN (R 4.2.3)
-     withr            3.0.0       2024-01-16 [1] CRAN (R 4.3.2)
-     xfun             0.43        2024-03-25 [1] CRAN (R 4.4.0)
-     XML              3.99-0.16.1 2024-01-22 [1] CRAN (R 4.3.2)
-     xml2             1.3.6       2023-12-04 [1] CRAN (R 4.4.0)
-     yaml             2.3.8       2023-12-11 [1] CRAN (R 4.3.2)
-     zen4R          * 0.9         2023-09-20 [1] CRAN (R 4.3.2)
-     zip              2.3.1       2024-01-27 [1] CRAN (R 4.4.0)
+     package      * version     date (UTC) lib source
+     abind        * 1.4-5       2016-07-21 [1] RSPM (R 4.4.0)
+     anytime        0.3.9       2020-08-27 [1] RSPM (R 4.4.0)
+     base64enc      0.1-3       2015-07-28 [1] RSPM (R 4.4.0)
+     bit            4.0.5       2022-11-15 [1] RSPM (R 4.4.0)
+     bit64          4.0.5       2020-08-30 [1] RSPM (R 4.4.0)
+     class          7.3-22      2023-05-03 [2] CRAN (R 4.4.1)
+     classInt       0.4-10      2023-09-05 [1] RSPM (R 4.4.0)
+     cli            3.6.3       2024-06-21 [1] RSPM (R 4.4.0)
+     codetools      0.2-20      2024-03-31 [2] CRAN (R 4.4.1)
+     colorspace     2.1-0       2023-01-23 [1] RSPM (R 4.4.0)
+     cols4all       0.7-1       2024-03-12 [1] RSPM (R 4.4.0)
+     crayon         1.5.3       2024-06-20 [1] RSPM (R 4.4.0)
+     crosstalk      1.2.1       2023-11-23 [1] RSPM (R 4.4.0)
+     cubble       * 0.3.1       2024-07-02 [1] RSPM (R 4.4.0)
+     cubelyr        1.0.2       2022-11-07 [1] RSPM (R 4.4.0)
+     data.table     1.15.4      2024-03-30 [1] RSPM (R 4.4.0)
+     DBI            1.2.3       2024-06-02 [1] RSPM (R 4.4.0)
+     dichromat      2.0-0.1     2022-05-02 [1] RSPM (R 4.4.0)
+     digest         0.6.36      2024-06-23 [1] RSPM (R 4.4.0)
+     dplyr        * 1.1.4       2023-11-17 [1] RSPM (R 4.4.0)
+     e1071          1.7-14      2023-12-06 [1] RSPM (R 4.4.0)
+     ellipsis       0.3.2       2021-04-29 [1] RSPM (R 4.4.0)
+     evaluate       0.24.0      2024-06-10 [1] RSPM (R 4.4.0)
+     fansi          1.0.6       2023-12-08 [1] RSPM (R 4.4.0)
+     farver         2.1.2       2024-05-13 [1] RSPM (R 4.4.0)
+     fastmap        1.2.0       2024-05-15 [1] RSPM (R 4.4.0)
+     generics       0.1.3       2022-07-05 [1] RSPM (R 4.4.0)
+     ggnewscale   * 0.4.10.9000 2024-07-11 [1] Github (eliocamp/ggnewscale@4391903)
+     ggplot2      * 3.5.1       2024-04-23 [1] RSPM (R 4.4.0)
+     glue           1.7.0       2024-01-09 [1] RSPM (R 4.4.0)
+     gtable         0.3.5       2024-04-22 [1] RSPM (R 4.4.0)
+     here         * 1.0.1       2020-12-13 [1] RSPM (R 4.4.0)
+     hms            1.1.3       2023-03-21 [1] RSPM (R 4.4.0)
+     htmltools      0.5.8.1     2024-04-04 [1] RSPM (R 4.4.0)
+     htmlwidgets    1.6.4       2023-12-06 [1] RSPM (R 4.4.0)
+     jsonlite       1.8.8       2023-12-04 [1] RSPM (R 4.4.0)
+     KernSmooth     2.23-24     2024-05-17 [2] CRAN (R 4.4.1)
+     knitr          1.48        2024-07-07 [1] RSPM (R 4.4.0)
+     labeling       0.4.3       2023-08-29 [1] RSPM (R 4.4.0)
+     lattice        0.22-6      2024-03-20 [2] CRAN (R 4.4.1)
+     leafem         0.2.3       2023-09-17 [1] RSPM (R 4.4.0)
+     leaflegend     1.2.1       2024-05-09 [1] RSPM (R 4.4.0)
+     leaflet        2.2.2       2024-03-26 [1] RSPM (R 4.4.0)
+     leafsync       0.1.0       2019-03-05 [1] RSPM (R 4.4.0)
+     lifecycle      1.0.4       2023-11-07 [1] RSPM (R 4.4.0)
+     lubridate      1.9.3       2023-09-27 [1] RSPM (R 4.4.0)
+     lwgeom         0.2-15      2024-07-11 [1] Github (r-spatial/lwgeom@304022f)
+     magrittr       2.0.3       2022-03-30 [1] RSPM (R 4.4.0)
+     munsell        0.5.1       2024-04-01 [1] RSPM (R 4.4.0)
+     ncdf4          1.22        2023-11-28 [1] RSPM (R 4.4.0)
+     patchwork    * 1.2.0       2024-01-08 [1] RSPM (R 4.4.0)
+     pillar         1.9.0       2023-03-22 [1] RSPM (R 4.4.0)
+     pkgconfig      2.0.3       2019-09-22 [1] RSPM (R 4.4.0)
+     png            0.1-8       2022-11-29 [1] RSPM (R 4.4.0)
+     proxy          0.4-27      2022-06-09 [1] RSPM (R 4.4.0)
+     purrr        * 1.0.2       2023-08-10 [1] RSPM (R 4.4.0)
+     R6             2.5.1       2021-08-19 [1] RSPM (R 4.4.0)
+     raster         3.6-26      2023-10-14 [1] RSPM (R 4.4.0)
+     RColorBrewer   1.1-3       2022-04-03 [1] RSPM (R 4.4.0)
+     Rcpp           1.0.12      2024-01-09 [1] RSPM (R 4.4.0)
+     readr        * 2.1.5       2024-01-10 [1] RSPM (R 4.4.0)
+     rlang          1.1.4       2024-06-04 [1] RSPM (R 4.4.0)
+     rmarkdown      2.27        2024-05-17 [1] RSPM (R 4.4.0)
+     rprojroot      2.0.4       2023-11-05 [1] RSPM (R 4.4.0)
+     rstudioapi     0.16.0      2024-03-24 [1] RSPM (R 4.4.0)
+     scales         1.3.0       2023-11-28 [1] RSPM (R 4.4.0)
+     sessioninfo    1.2.2       2021-12-06 [1] RSPM (R 4.4.0)
+     sf           * 1.0-17      2024-07-11 [1] Github (r-spatial/sf@0ef309a)
+     sp             2.1-4       2024-04-30 [1] RSPM (R 4.4.0)
+     spacesXYZ      1.3-0       2024-01-23 [1] RSPM (R 4.4.0)
+     stars        * 0.6-6       2024-07-11 [1] Github (r-spatial/stars@464e224)
+     stringi        1.8.4       2024-05-06 [1] RSPM (R 4.4.0)
+     stringr      * 1.5.1       2023-11-14 [1] RSPM (R 4.4.0)
+     terra          1.7-78      2024-05-22 [1] RSPM (R 4.4.0)
+     tibble         3.2.1       2023-03-20 [1] RSPM (R 4.4.0)
+     tidyr        * 1.3.1       2024-01-24 [1] RSPM (R 4.4.0)
+     tidyselect     1.2.1       2024-03-11 [1] RSPM (R 4.4.0)
+     timechange     0.3.0       2024-01-18 [1] RSPM (R 4.4.0)
+     tmap         * 4.0         2024-07-11 [1] Github (r-tmap/tmap@b303e4d)
+     tmaptools      3.1-1       2021-01-19 [1] RSPM (R 4.4.0)
+     tsibble      * 1.1.5       2024-06-27 [1] RSPM (R 4.4.0)
+     tzdb           0.4.0       2023-05-12 [1] RSPM (R 4.4.0)
+     units        * 0.8-5       2023-11-28 [1] RSPM (R 4.4.0)
+     utf8           1.2.4       2023-10-22 [1] RSPM (R 4.4.0)
+     vctrs          0.6.5       2023-12-01 [1] RSPM (R 4.4.0)
+     viridisLite    0.4.2       2023-05-02 [1] RSPM (R 4.4.0)
+     vroom          1.6.5       2023-12-05 [1] RSPM (R 4.4.0)
+     widgetframe    0.3.1       2017-12-20 [1] RSPM (R 4.4.0)
+     withr          3.0.0       2024-01-16 [1] RSPM (R 4.4.0)
+     xfun           0.45        2024-06-16 [1] RSPM (R 4.4.0)
+     XML            3.99-0.17   2024-06-25 [1] RSPM (R 4.4.0)
+     yaml           2.3.9       2024-07-05 [1] RSPM (R 4.4.0)
 
-     [1] C:/Users/b1066081/AppData/Local/R/win-library/4.4
-     [2] C:/Program Files/R/R-4.4.0/library
+     [1] /usr/local/lib/R/site-library
+     [2] /usr/local/lib/R/library
 
     ──────────────────────────────────────────────────────────────────────────────
